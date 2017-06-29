@@ -255,7 +255,7 @@ class GPGParser:
         key_dict['fingerprint'] = line.split('= ')[1].strip()
 
     @staticmethod
-    def parse_date(date_string):
+    def _parse_date(date_string):
         return datetime.date(
             *[int(part) for part in date_string.split('-')]
         )
