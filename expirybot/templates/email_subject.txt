@@ -1,0 +1,1 @@
+PGP key expires in {days_until_expiry} days: {key_id}
