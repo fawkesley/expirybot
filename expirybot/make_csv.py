@@ -103,7 +103,6 @@ def read_short_ids(filename):
             yield line.strip()
             count += 1
             if count % 1000 == 0:
-                raise RuntimeError("Stop")
                 print('{} short ids ({})'.format(
                     count, datetime.datetime.now() - start_time)
                 )
