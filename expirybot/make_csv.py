@@ -51,8 +51,7 @@ def main():
         csv_writer.writeheader()
 
         for short_id in short_ids:
-            for key in fake_get_keys(short_id, gpg_parser):
-            # for key in get_keys_for_short_id(short_id, gpg_parser):
+            for key in get_keys_for_short_id(short_id, gpg_parser):
 
                 logging.debug("Key for short id {}: {}".format(short_id, key))
 
@@ -254,6 +253,12 @@ class GPGParser:
     @staticmethod
     def _update_key_from_fingerprint_line(key_dict, line):
         key_dict['fingerprint'] = line.split('= ')[1].strip()
+
+    @staticmethod
+    def parse_date(date_string):
+        return datetime.date(
+            *[int(part) for part in date_string.split('-')]
+        )
 
     def _run_gpg(self, key_filename):
 
