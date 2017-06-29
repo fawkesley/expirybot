@@ -10,7 +10,7 @@ copy_short_ids_dump_file() {
   mkdir -p $(dirname $SHORT_IDS_FILE)
 
   if [ ! -f "${SHORT_IDS_FILE}" ]; then
-    cp ${HOME}/short_key_ids_dump.txt "${SHORT_IDS_FILE}"
+    mv ${HOME}/short_key_ids_dump.txt "${SHORT_IDS_FILE}"
   fi
 }
 
