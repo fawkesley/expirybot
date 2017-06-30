@@ -96,8 +96,7 @@ def send_email(row):
             request_url,
             auth=('api', MAILGUN_API_KEY),
             data={
-                'from': 'paul@keyserver.paulfurley.com',
-                'sender': 'paul@keyserver.paulfurley.com',
+                'from': 'Paul M Furley <paul@keyserver.paulfurley.com>',
                 'to': row['primary_email'],
                 'bcc': 'paul@paulfurley.com',
                 'h:Reply-To': 'paul@paulfurley.com',
