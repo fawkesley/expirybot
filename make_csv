@@ -15,11 +15,9 @@ copy_short_ids_dump_file() {
 }
 
 make_expiring_keys_csv() {
+  cd "${THIS_DIR}"
   python3 -m expirybot.make_csv "${SHORT_IDS_FILE}"
-}
-
-send_emails() {
-  python3 -m expirybot.send_emails "${SHORT_IDS_FILE}"
+  cd -
 }
 
 clean_dev_shm() {
@@ -28,5 +26,4 @@ clean_dev_shm() {
 
 copy_short_ids_dump_file
 make_expiring_keys_csv
-send_emails
 clean_dev_shm

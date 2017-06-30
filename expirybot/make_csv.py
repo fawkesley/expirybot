@@ -39,14 +39,13 @@ def main():
 
     output_filename = make_output_filename(
         datetime.date.today(),
-        datetime.date.today() + datetime.timedelta(days=3)
     )
 
     gpg_parser = GPGParser()
 
     short_ids = read_short_ids(short_ids_file)
 
-    with io.open(output_filename, 'w', 1) as f:
+    with io.open(atomic_filename(output_filename), 'w', 1) as f:
         csv_writer = csv.DictWriter(f, CSV_HEADER, quoting=csv.QUOTE_ALL)
         csv_writer.writeheader()
 
@@ -58,6 +57,11 @@ def main():
                 if key.expires_in(EXPIRING_DAYS):
                     write_key_to_csv(key, csv_writer)
 
+    os.rename(
+        atomic_filename(output_filename),
+        output_filename
+    )
+
 
 def fake_get_keys(short_id, gpg_parser):
     yield PGPKeyWrapper({
@@ -65,6 +69,11 @@ def fake_get_keys(short_id, gpg_parser):
         'expiry_date': datetime.date(2017, 7, 1),
         'uids': ['Paul Michael Furley <paul@paulfurley.com>', 'furbitso <furbitso@gmail.com>'],
     })
+
+
+def atomic_filename(filename):
+    path, name = os.path.split(filename)
+    return pjoin(path, '.{}'.format(name))
 
 
 def write_key_to_csv(key, csv_writer):
@@ -84,7 +93,7 @@ def write_key_to_csv(key, csv_writer):
     })
 
 
-def make_output_filename(today, expiry_date):
+def make_output_filename(today):
     return pjoin(DATA_DIR, today.isoformat(), 'keys_expiring.csv')
 
 
