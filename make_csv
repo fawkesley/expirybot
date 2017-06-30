@@ -14,6 +14,10 @@ copy_short_ids_dump_file() {
   fi
 }
 
+setup_dev_shm() {
+  mkdir -p /dev/shm/tmp.expirybot
+}
+
 make_expiring_keys_csv() {
   cd "${THIS_DIR}"
   python3 -m expirybot.make_csv "${SHORT_IDS_FILE}"
@@ -21,9 +25,10 @@ make_expiring_keys_csv() {
 }
 
 clean_dev_shm() {
-  rm -rf /dev/shm/tmp.expirybot.*
+  rm -rf /dev/shm/tmp.expirybot/
 }
 
 copy_short_ids_dump_file
+setup_dev_shm
 make_expiring_keys_csv
 clean_dev_shm

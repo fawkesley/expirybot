@@ -179,7 +179,7 @@ class GPGParser:
 
     def __init__(self):
         self.gpg_home = tempfile.mkdtemp(
-            dir='/dev/shm', prefix='tmp.expirybot.'
+            dir='/dev/shm/tmp.expirybot', prefix='homedir.'
         )
         os.chmod(self.gpg_home, 0o700)
         with io.open(pjoin(self.gpg_home, 'gpg.conf'), 'wt') as f:
@@ -191,7 +191,7 @@ class GPGParser:
     def get_keys(self, pgp_ascii_armor):
 
         with tempfile.NamedTemporaryFile(
-                dir="/dev/shm/", prefix="tmp.expirybot.") as f:
+                dir="/dev/shm/tmp.expirybot", prefix="key.") as f:
             f.write(pgp_ascii_armor.encode('ascii'))
             f.flush()
 
@@ -268,6 +268,7 @@ class GPGParser:
     def _run_gpg(self, key_filename):
 
         cmd_parts = [
+            'firejail',
             self.GPG,
             '--homedir',
             self.gpg_home,
