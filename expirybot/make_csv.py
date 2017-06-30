@@ -268,7 +268,6 @@ class GPGParser:
     def _run_gpg(self, key_filename):
 
         cmd_parts = [
-            'firejail',
             self.GPG,
             '--homedir',
             self.gpg_home,

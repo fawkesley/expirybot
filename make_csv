@@ -20,7 +20,7 @@ setup_dev_shm() {
 
 make_expiring_keys_csv() {
   cd "${THIS_DIR}"
-  python3 -m expirybot.make_csv "${SHORT_IDS_FILE}"
+  firejail python3 -m expirybot.make_csv "${SHORT_IDS_FILE}"
   cd -
 }
 
