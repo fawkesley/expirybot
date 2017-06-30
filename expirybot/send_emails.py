@@ -21,7 +21,7 @@ from os.path import abspath, dirname, join as pjoin
 from .make_csv import CSV_HEADER, DATA_DIR
 
 MAILGUN_API_KEY = 'key-573117304668c45426cbfb1769811516'
-EMAILS_TO_SEND = 5
+EMAILS_TO_SEND = 10
 
 
 def main():
