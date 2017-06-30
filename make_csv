@@ -10,23 +10,25 @@ copy_short_ids_dump_file() {
   mkdir -p $(dirname $SHORT_IDS_FILE)
 
   if [ ! -f "${SHORT_IDS_FILE}" ]; then
-    cp ${HOME}/short_key_ids_dump.txt "${SHORT_IDS_FILE}"
+    mv ${HOME}/short_key_ids_dump.txt "${SHORT_IDS_FILE}"
   fi
 }
 
-make_expiring_keys_csv() {
-  ./expirybot/make_csv.py "${SHORT_IDS_FILE}"
+setup_dev_shm() {
+  mkdir -p /dev/shm/tmp.expirybot
 }
 
-send_emails() {
-  echo
+make_expiring_keys_csv() {
+  cd "${THIS_DIR}"
+  firejail python3 -m expirybot.make_csv "${SHORT_IDS_FILE}"
+  cd -
 }
 
 clean_dev_shm() {
-  rm -rf /dev/shm/tmp.expirybot.*
+  rm -rf /dev/shm/tmp.expirybot/
 }
 
 copy_short_ids_dump_file
+setup_dev_shm
 make_expiring_keys_csv
-send_emails
 clean_dev_shm
