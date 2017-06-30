@@ -46,7 +46,7 @@ def main():
 
     short_ids = read_short_ids(short_ids_file)
 
-    with io.open(output_filename, 'w') as f:
+    with io.open(output_filename, 'w', 1) as f:
         csv_writer = csv.DictWriter(f, CSV_HEADER, quoting=csv.QUOTE_ALL)
         csv_writer.writeheader()
 
@@ -85,11 +85,7 @@ def write_key_to_csv(key, csv_writer):
 
 
 def make_output_filename(today, expiry_date):
-    return pjoin(
-        DATA_DIR,
-        today.isoformat(),
-        'keys_expiring_{}.csv'.format(expiry_date.isoformat())
-    )
+    return pjoin(DATA_DIR, today.isoformat(), 'keys_expiring.csv')
 
 
 def read_short_ids(filename):
