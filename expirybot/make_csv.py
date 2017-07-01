@@ -42,7 +42,6 @@ def main():
 
     gpg_parser = GPGParser()
 
-    short_ids = read_short_ids(short_ids_file)
     short_id_count = 0
     keys_parsed_count = 0
 
@@ -50,7 +49,7 @@ def main():
         csv_writer = csv.DictWriter(f, CSV_HEADER, quoting=csv.QUOTE_ALL)
         csv_writer.writeheader()
 
-        for short_id in short_ids:
+        for short_id in read_short_ids(short_ids_file):
             for key in get_keys_for_short_id(short_id, gpg_parser):
 
                 logging.debug("Key for short id {}: {}".format(short_id, key))
