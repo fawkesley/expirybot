@@ -33,17 +33,18 @@ CSV_HEADER = [
 
 
 def main():
-    logging.basicConfig(level=logging.WARN)
-
     short_ids_file = sys.argv[1]
 
-    output_filename = make_output_filename(
-        datetime.date.today(),
-    )
+    today_data_dir = make_today_data_dir(datetime.date.today())
+    setup_logging(today_data_dir)
+
+    output_filename = pjoin(today_data_dir, 'keys_expiring.csv')
 
     gpg_parser = GPGParser()
 
     short_ids = read_short_ids(short_ids_file)
+    short_id_count = 0
+    keys_parsed_count = 0
 
     with io.open(atomic_filename(output_filename), 'w', 1) as f:
         csv_writer = csv.DictWriter(f, CSV_HEADER, quoting=csv.QUOTE_ALL)
@@ -57,10 +58,24 @@ def main():
                 if key.expires_in(EXPIRING_DAYS):
                     write_key_to_csv(key, csv_writer)
 
+                keys_parsed_count += 1
+
+            short_id_count += 1
+
     os.rename(
         atomic_filename(output_filename),
         output_filename
     )
+
+    logging.info("Attempted to check {} short ids. Parsed {} keys.".format(
+        short_id_count, keys_parsed_count))
+
+
+def setup_logging(today_data_dir):
+    log_filename = pjoin(today_data_dir, 'make_csv.log')
+    logging.basicConfig(level=logging.WARN,
+                        filename=log_filename,
+                        format='(asctime)s %(levelname)s %(message)s')
 
 
 def fake_get_keys(short_id, gpg_parser):
@@ -93,8 +108,8 @@ def write_key_to_csv(key, csv_writer):
     })
 
 
-def make_output_filename(today):
-    return pjoin(DATA_DIR, today.isoformat(), 'keys_expiring.csv')
+def make_today_data_dir(today):
+    return pjoin(DATA_DIR, today.isoformat())
 
 
 def read_short_ids(filename):
