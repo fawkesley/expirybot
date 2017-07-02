@@ -98,7 +98,6 @@ def send_email(row):
             data={
                 'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
                 'to': row['primary_email'],
-                'bcc': 'paul@paulfurley.com',
                 'h:Reply-To': 'paul@paulfurley.com',
                 'subject': email_subject,
                 'text': email_body
