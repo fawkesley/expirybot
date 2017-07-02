@@ -3,6 +3,7 @@
 THIS_SCRIPT=$0
 THIS_DIR=$(dirname ${THIS_SCRIPT})
 
+SHARED_SHORT_IDS_FILE=/usr/share/sks/short_key_ids_dump.txt
 SHORT_IDS_FILE="${THIS_DIR}/data/$(date +%F)/short_key_ids.txt"
 
 
@@ -10,7 +11,7 @@ copy_short_ids_dump_file() {
   mkdir -p $(dirname $SHORT_IDS_FILE)
 
   if [ ! -f "${SHORT_IDS_FILE}" ]; then
-    mv ${HOME}/short_key_ids_dump.txt "${SHORT_IDS_FILE}"
+    cp "${SHARED_SHORT_IDS_FILE}" "${SHORT_IDS_FILE}"
   fi
 }
 
