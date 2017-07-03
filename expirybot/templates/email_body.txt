@@ -1,30 +1,26 @@
 Hello!
 
-This is a reminder that the PGP key below expires in {days_until_expiry} days on {friendly_expiry_date}.
+This is a friendly reminder that your PGP key expires on {friendly_expiry_date}.
 
 fingerprint: {fingerprint}
 long key id: {key_id}
 
+Here's the key listed in the public keyserver that I run:
+
 https://keyserver.paulfurley.com/pks/lookup?op=vindex&search={key_id}
 
-If you use GNU Privacy Guard (GnuPG) software, here's a reminder how
-to extend the primary key and subkey for 3 months:
+== Extend your key expiry date ==
 
-```
-$ gpg --edit-key '{fingerprint}'
-key 0
-expire
-3m
-y
-[repeat for subkeys: key 1, key 2 etc...]
-save
-```
+You can extend your key's expiry date and push it to the keyservers.
 
-And to push your updated key to the keyservers:
+You don't need to create a new key.
 
-```
-$ gpg --send-keys '{fingerprint}'
-```
+I've written a few short guides with screenshots for different software:
+
+- Enigmail with Thunderbird: https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
+- GNU Privacy Guard (GnuPG): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
+
+(I'm currently working on Mailvelope and GPGTools - any others?)
 
 I hope this email has been helpful.
 
@@ -35,10 +31,10 @@ Kind regards,
 Paul
 
 --
-Paul M Furley | paul@paulfurley.com | @paul_furley
+Paul M Furley => Engineer / Maker
 
-Engineer / Maker
+Trying to improve the world by making :)
 
-Trying to make PGP great again :)
-
-A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
+- Twitter: https://twitter.com/paul_furley
+- Website: https://www.paulfurley.com
+- PGP: A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517

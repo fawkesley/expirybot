@@ -1,1 +1,1 @@
-PGP key expires in {days_until_expiry} days: {key_id}
+PGP key expires in {days_until_expiry} days: {key_id} (it can be extended)
