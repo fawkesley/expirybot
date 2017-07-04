@@ -1,0 +1,13 @@
+#!/bin/sh -eux
+
+THIS_SCRIPT=$0
+THIS_DIR=$(dirname ${THIS_SCRIPT})
+
+
+make_keys_expiring_csv() {
+  cd "${THIS_DIR}"
+  python3 -m expirybot.make_keys_expiring_csv
+  cd -
+}
+
+make_keys_expiring_csv
