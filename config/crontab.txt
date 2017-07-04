@@ -21,5 +21,5 @@ MAILTO="paul@paulfurley.com"
 # directly, as that isn't source controlled.
 @hourly crontab < ~/crontab.txt
 
-30 0 * * * ~/app/make_csv
-9 14 * * * ~/app/send_emails
+30 0 * * * ~/app/make_fingerprint_csv && ~/app/make_keys_expiring_csv
+3 12,13,14 * * * run-one ~/app/send_emails
