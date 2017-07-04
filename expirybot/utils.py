@@ -29,8 +29,8 @@ def atomic_filename(filename):
     return pjoin(path, '.{}'.format(name))
 
 
-def load_keys_from_csv(csv):
-    with io.open(pjoin(DATA_DIR, 'keys.csv'), 'rt') as f:
+def load_keys_from_csv(csv_file):
+    with io.open(pjoin(DATA_DIR, csv_file), 'rt') as f:
         for row in csv.DictReader(f):
             yield PGPKey(**row)
 

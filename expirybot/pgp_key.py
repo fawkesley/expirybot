@@ -4,7 +4,7 @@ import re
 
 class PGPKey:
     def __init__(self, fingerprint=None, uids=None, expiry_date=None,
-                 created_date=None):
+                 created_date=None, **kwargs):
         self._fingerprint = None
         self._expiry_date = None
         self._uids = []
@@ -68,6 +68,10 @@ class PGPKey:
     @property
     def is_revoked(self):
         return self._revoked
+
+    @property
+    def is_valid(self):
+        return self._fingerprint is not None and not self._revoked
 
     @property
     def days_until_expiry(self, today=None):

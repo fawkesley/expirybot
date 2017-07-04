@@ -30,7 +30,7 @@ def main():
             pjoin(today_data_dir, 'keys_expiring.csv'),
             FINGERPRINT_CSV_HEADER) as csv_writer:
 
-        for key in load_keys_from_csv(pjoin(DATA_DIR), 'keys.csv'):
+        for key in load_keys_from_csv(pjoin(DATA_DIR, 'keys.csv')):
 
             if key.expires_in(EXPIRING_DAYS):
                 write_key_to_csv(key, csv_writer)

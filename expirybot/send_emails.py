@@ -16,8 +16,7 @@ import requests
 
 from os.path import dirname, join as pjoin
 
-from .make_csv import CSV_HEADER
-from .config import MAILGUN_API_KEY
+from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
@@ -37,7 +36,7 @@ def main():
     logging.info("Already sent {} emails".format(len(key_ids_already_emailed)))
 
     with io.open(emails_sent_csv, 'a', 1) as g:
-        csv_writer = csv.DictWriter(g, CSV_HEADER, quoting=csv.QUOTE_ALL)
+        csv_writer = csv.DictWriter(g, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL)
 
         for key in load_keys_from_csv(keys_expiring_csv):
             if len(key_ids_already_emailed) >= EMAILS_TO_SEND:
@@ -45,23 +44,23 @@ def main():
                     len(key_ids_already_emailed)))
                 break
 
-            if key.key_id in key_ids_already_emailed:
+            if key.long_id in key_ids_already_emailed:
                 logging.info("Already emailed key: {}".format(key))
                 continue
 
             if send_email(key):
                 write_key_to_csv(key, csv_writer)
-                key_ids_already_emailed.add(key.key_id)
+                key_ids_already_emailed.add(key.long_id)
 
 
 def load_key_ids_already_emailed(emails_sent_csv):
     if not os.path.exists(emails_sent_csv):
         with io.open(emails_sent_csv, 'w') as f:
-            csv_writer = csv.DictWriter(f, CSV_HEADER, quoting=csv.QUOTE_ALL)
+            csv_writer = csv.DictWriter(f, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL)
             csv_writer.writeheader()
         return []
 
-    return set([key.key_id for key in load_keys_from_csv(emails_sent_csv)])
+    return set([key.long_id for key in load_keys_from_csv(emails_sent_csv)])
 
 
 def load_template(name):
@@ -69,19 +68,25 @@ def load_template(name):
         return f.read()
 
 
-def send_email(row):
-    logging.info("send_email: {}".format(row))
-    email_body = load_template('email_body.txt').format(**row)
-    email_subject = load_template('email_subject.txt').format(**row)
+def send_email(key):
+    logging.info("send_email: {}".format(key))
 
-    logging.info("About to send email:\nSubject: {}".format(
-        email_subject)
+    data = {
+        'fingerprint': key.fingerprint,
+        'key_id': key.long_id,
+        'friendly_expiry_date': key.friendly_expiry_date,
+        'days_until_expiry': key.days_until_expiry
+    }
+
+    email_body = load_template('email_body.txt').format(**data)
+    email_subject = load_template('email_subject.txt').format(**data)
+
+    logging.info("About to send email:\nSubject: {}\n{}".format(
+        email_subject, email_body)
     )
     time.sleep(5)
 
     domain = 'keyserver.paulfurley.com'
-
-    raise RuntimeError(email_body)
 
     request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
 
@@ -91,7 +96,7 @@ def send_email(row):
             auth=('api', MAILGUN_API_KEY),
             data={
                 'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
-                'to': row['primary_email'],
+                'to': key.primary_email,
                 'h:Reply-To': 'paul@paulfurley.com',
                 'subject': email_subject,
                 'text': email_body
@@ -110,10 +115,6 @@ def send_email(row):
         return False
 
     return True
-
-
-def record_sent(row, csv_writer):
-    csv_writer.writerow(row)
 
 
 if __name__ == '__main__':

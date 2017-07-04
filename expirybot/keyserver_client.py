@@ -29,7 +29,7 @@ class KeyserverClient:
         )
 
         for key in KeyserverVindexParser(self.http_getter.get(url)).keys():
-            if not key.is_revoked:
+            if key.is_valid:
                 yield key
 
     #def get_key_for_fingerprint(self, fingerprint):
@@ -249,14 +249,17 @@ class KeyserverVindexParser:
 
     def keys(self):
         for key_string in self.key_strings:
-            key = PGPKey()
+            try:
+                key = PGPKey()
 
-            for line in key_string.split('\n'):
-                if line.startswith('pub'):
-                    self._update_key_from_pub_line(key, line)
+                for line in key_string.split('\n'):
+                    if line.startswith('pub'):
+                        self._update_key_from_pub_line(key, line)
 
-                elif line.startswith('uid'):
-                    self._update_key_from_uid_line(key, line)
+                    elif line.startswith('uid'):
+                        self._update_key_from_uid_line(key, line)
+            except ValueError as e:
+                LOG.exception(e)
 
             yield key
 
@@ -267,7 +270,7 @@ class KeyserverVindexParser:
         """
         (_, fingerprint, _, _, _, expiry_timestamp, flag) = line.split(':')
 
-        if flag != '' and flag != '':
+        if flag != '' and flag != 'r':
             LOG.info('Got this key flag: `{}`'.format(flag))
 
         key.set_fingerprint(fingerprint)

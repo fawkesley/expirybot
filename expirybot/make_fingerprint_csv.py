@@ -60,6 +60,12 @@ def setup_logging(today_data_dir):
 
 
 def read_short_ids(filename):
+    num_lines = 0
+
+    with io.open(filename, 'r') as f:
+        for line in f:
+            num_lines += 1
+
     start_time = datetime.datetime.now()
 
     with io.open(filename, 'r') as f:
@@ -68,9 +74,18 @@ def read_short_ids(filename):
         for line in f:
             yield line.strip()
             count += 1
-            if count % 1000 == 0:
-                print('{} short ids ({})'.format(
-                    count, datetime.datetime.now() - start_time)
+
+            if count % 5000 == 0:
+                duration = datetime.datetime.now() - start_time
+                time_per_line = duration / count
+
+                print('{} / {} ({:.1f}%) short ids in {} ({} per million), eta {}'.format(
+                    count,
+                    num_lines,
+                    count / num_lines * 100,
+                    duration,
+                    duration * (1000000 / count),
+                    (num_lines - count) * time_per_line)
                 )
 
 
