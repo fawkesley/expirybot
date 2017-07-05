@@ -76,3 +76,12 @@ class TestKeyserverVindexParser(unittest.TestCase):
             got = list(KeyserverVindexParser(f.read()).keys())
 
         assert_equal([], got)
+
+    def test_process_key_with_unicode_in_uid(self):
+        fn = pjoin(dirname(__file__), 'sample_data', 'vindex_unicode')
+
+        with io.open(fn, 'rb') as f:
+            got = list(KeyserverVindexParser(f.read()).keys())
+
+        assert_equal('Tobias Yüksel <Tobias.yueksel@googlemail.com>',
+                     got[0].uids[0])

@@ -7,6 +7,7 @@ import tempfile
 import shlex
 import subprocess
 from os.path import join as pjoin
+from urllib.parse import unquote
 
 import requests
 
@@ -296,7 +297,7 @@ class KeyserverVindexParser:
         """
         (_, uid, _, _, _) = line.split(':')
 
-        key.add_uid(uid)
+        key.add_uid(unquote(uid))
 
 
 class HttpGetterWithSessionAndUserAgent:
