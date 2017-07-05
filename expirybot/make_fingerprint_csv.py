@@ -56,7 +56,7 @@ def setup_logging(today_data_dir):
     log_filename = pjoin(today_data_dir, 'make_fingerprint_csv.log')
     logging.basicConfig(level=logging.INFO,
                         filename=log_filename,
-                        format='(asctime)s %(levelname)s %(message)s')
+                        format='%(asctime)s %(levelname)s %(message)s')
 
 
 def read_short_ids(filename):
