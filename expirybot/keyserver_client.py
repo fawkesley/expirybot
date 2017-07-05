@@ -10,7 +10,7 @@ from os.path import join as pjoin
 
 import requests
 
-from .pgp_key import PGPKey, Fingerprint
+from .pgp_key import PGPKey, Fingerprint, OpenPGPVersion3FingerprintUnsupported
 
 GPG_FINGERPRINT_PATTERN = '[A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4}  [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4}'  # noqa
 LOG = logging.getLogger(__name__)
@@ -259,6 +259,11 @@ class KeyserverVindexParser:
 
                     elif line.startswith('uid'):
                         self._update_key_from_uid_line(key, line)
+
+            except OpenPGPVersion3FingerprintUnsupported as e:
+                key = PGPKey()  # invalidate the key
+                continue
+
             except ValueError as e:
                 LOG.exception(e)
                 key = PGPKey()  # invalidate the key

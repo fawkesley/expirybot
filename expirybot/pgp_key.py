@@ -1,6 +1,13 @@
 import datetime
 import re
 
+import logging
+LOG = logging.getLogger(__name__)
+
+
+class OpenPGPVersion3FingerprintUnsupported(ValueError):
+    pass
+
 
 class PGPKey:
     def __init__(self, fingerprint=None, uids=None, expiry_date=None,
@@ -138,8 +145,14 @@ class Fingerprint():
                 match.group('hex').upper()
             )  # e.g. return 'A999B749...'
         else:
-            raise ValueError(
-                "Fingerprint appears to be invalid: `{}`".format(string))
+            if len(string) == 16:
+                LOG.debug("Dropping v3 key {}".format(string))
+                raise OpenPGPVersion3FingerprintUnsupported(
+                    '{}'.format(string)
+                )
+            else:
+                raise ValueError(
+                    "Fingerprint appears to be invalid: `{}`".format(string))
 
     def to_long_id(self):
         return '0x{}'.format(self._hex_digits.upper().replace(' ', '')[-16:])
