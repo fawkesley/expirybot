@@ -69,8 +69,10 @@ class TestKeyserverVindexParser(unittest.TestCase):
 
         assert_true(got[1].is_revoked)
 
-    def test_process_weird_key(self):
-        with io.open(pjoin(dirname(__file__), 'sample_data', 'vindex_null_byte'), 'rb') as f:
+    def test_process_key_with_null_byte_in_uid(self):
+        fn = pjoin(dirname(__file__), 'sample_data', 'vindex_null_byte')
+
+        with io.open(fn, 'rb') as f:
             got = list(KeyserverVindexParser(f.read()).keys())
 
         assert_equal([], got)
