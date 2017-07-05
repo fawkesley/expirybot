@@ -81,8 +81,10 @@ def send_email(key):
     email_body = load_template('email_body.txt').format(**data)
     email_subject = load_template('email_subject.txt').format(**data)
 
-    logging.info("About to send email:\nSubject: {}\n{}".format(
-        email_subject, email_body)
+    to = key.primary_email
+
+    logging.info("About to send email to {}:\nSubject: {}\n{}".format(
+        to, email_subject, email_body)
     )
     time.sleep(5)
 
@@ -96,7 +98,7 @@ def send_email(key):
             auth=('api', MAILGUN_API_KEY),
             data={
                 'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
-                'to': key.primary_email,
+                'to': to,
                 'h:Reply-To': 'paul@paulfurley.com',
                 'subject': email_subject,
                 'text': email_body
