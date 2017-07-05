@@ -30,6 +30,8 @@ def atomic_filename(filename):
 
 
 def load_keys_from_csv(csv_file):
+    csv.field_size_limit(500 * 1024 * 1024)
+
     with io.open(pjoin(DATA_DIR, csv_file), 'rt') as f:
         for row in csv.DictReader(f):
             yield PGPKey(**row)
