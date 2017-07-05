@@ -4,32 +4,19 @@ THIS_SCRIPT=$0
 THIS_DIR=$(dirname ${THIS_SCRIPT})
 
 SHARED_SHORT_IDS_FILE=/usr/share/sks/short_key_ids_dump.txt
-SHORT_IDS_FILE="${THIS_DIR}/data/$(date +%F)/short_key_ids.txt"
+
+TODAYS_DATA_DIR="${THIS_DIR}/data/$(date +%F)/"
 
 
-copy_short_ids_dump_file() {
-  mkdir -p $(dirname $SHORT_IDS_FILE)
-
-  if [ ! -f "${SHORT_IDS_FILE}" ]; then
-    cp "${SHARED_SHORT_IDS_FILE}" "${SHORT_IDS_FILE}"
-  fi
-}
-
-setup_dev_shm() {
-  mkdir -p /dev/shm/tmp.expirybot
+make_todays_data_dir() {
+  mkdir -p ${TODAYS_DATA_DIR}
 }
 
 make_expiring_keys_csv() {
   cd "${THIS_DIR}"
-  firejail python3 -m expirybot.make_fingerprint_csv "${SHORT_IDS_FILE}"
+  firejail python3 -m expirybot.make_fingerprint_csv "${SHARED_SHORT_IDS_FILE}"
   cd -
 }
 
-clean_dev_shm() {
-  rm -rf /dev/shm/tmp.expirybot/
-}
-
-copy_short_ids_dump_file
-setup_dev_shm
+make_todays_data_dir
 make_expiring_keys_csv
-clean_dev_shm
