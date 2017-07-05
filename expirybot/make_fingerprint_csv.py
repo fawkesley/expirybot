@@ -13,7 +13,7 @@ import logging
 
 from os.path import join as pjoin
 
-from .config import DATA_DIR, FINGERPRINT_CSV_HEADER
+from .config import DATA_DIR, FINGERPRINT_CSV_HEADER, KEYSERVER
 from .keyserver_client import KeyserverClient
 from .utils import (
     make_atomic_csv_writer, write_key_to_csv, make_today_data_dir
@@ -29,7 +29,7 @@ def main():
     short_id_count = 0
     keys_parsed_count = 0
 
-    keyserver_client = KeyserverClient()
+    keyserver_client = KeyserverClient(KEYSERVER)
 
     with make_atomic_csv_writer(
             pjoin(DATA_DIR, 'keys.csv'),

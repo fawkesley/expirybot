@@ -227,8 +227,9 @@ class KeyserverVindexParser:
     uid:%C5%81ukasz Jurczyk <zabszk@protonmail.ch>:1465402295::
     """
 
-    def __init__(self, string):
-        self.key_strings = self._split_on_key(string)
+    def __init__(self, response_bytes):
+        assert isinstance(response_bytes, bytes), type(response_bytes)
+        self.key_strings = self._split_on_key(response_bytes.decode('utf-8'))
 
     @staticmethod
     def _split_on_key(string):
@@ -260,6 +261,8 @@ class KeyserverVindexParser:
                         self._update_key_from_uid_line(key, line)
             except ValueError as e:
                 LOG.exception(e)
+                key = PGPKey()  # invalidate the key
+                continue
 
             yield key
 
@@ -305,4 +308,4 @@ class HttpGetterWithSessionAndUserAgent:
 
         response = self.session.get(url, *args, **kwargs)
         response.raise_for_status()
-        return response.text
+        return response.content

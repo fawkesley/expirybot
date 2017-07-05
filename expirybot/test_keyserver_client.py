@@ -1,4 +1,7 @@
+import io
 import datetime
+
+from os.path import dirname, join as pjoin
 
 from nose.tools import assert_equal, assert_true
 import unittest
@@ -35,7 +38,9 @@ class TestKeyserverVindexParser(unittest.TestCase):
         assert_equal(expected[1], got[1])
 
     def test_keys(self):
-        got = list(KeyserverVindexParser(self.TEST_STRING).keys())
+        got = list(
+            KeyserverVindexParser(self.TEST_STRING.encode('utf-8')).keys()
+        )
 
         assert_equal(2, len(got))
 
@@ -63,3 +68,9 @@ class TestKeyserverVindexParser(unittest.TestCase):
         assert_equal(None, got[1].expiry_date)
 
         assert_true(got[1].is_revoked)
+
+    def test_process_weird_key(self):
+        with io.open(pjoin(dirname(__file__), 'sample_data', 'vindex_null_byte'), 'rb') as f:
+            got = list(KeyserverVindexParser(f.read()).keys())
+
+        assert_equal([], got)

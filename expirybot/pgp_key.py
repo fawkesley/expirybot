@@ -52,6 +52,10 @@ class PGPKey:
             raise TypeError('Unknown date format: {}'.format(date))
 
     def add_uid(self, uid_string):
+        assert isinstance(uid_string, str)
+        if '\0' in uid_string:
+            raise ValueError('NULL byte in uid for {}'.format(self))
+
         self._uids.append(uid_string)
 
     def set_revoked(self):
