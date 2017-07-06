@@ -16,7 +16,7 @@ import requests
 
 from os.path import dirname, join as pjoin
 
-from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER
+from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER, BLACKLISTED_DOMAINS
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
@@ -38,7 +38,7 @@ def main():
     with io.open(emails_sent_csv, 'a', 1) as g:
         csv_writer = csv.DictWriter(g, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL)
 
-        for key in load_keys_from_csv(keys_expiring_csv):
+        for key in filter_emails(load_keys_from_csv(keys_expiring_csv)):
             if len(key_ids_already_emailed) >= EMAILS_TO_SEND:
                 logging.info("Stopping now, sent {} emails".format(
                     len(key_ids_already_emailed)))
@@ -53,12 +53,28 @@ def main():
                 key_ids_already_emailed.add(key.long_id)
 
 
+def filter_emails(keys):
+    def has_email(key):
+        return key.primary_email is not None
+
+    def not_blacklisted(key):
+        _, domain = key.primary_email.split('@', 1)
+        blacklisted = domain.lower() in BLACKLISTED_DOMAINS
+
+        if blacklisted:
+            logging.info("Skipping blacklisted domain: {}".format(key.primary_email))
+
+        return not blacklisted
+
+    return filter(not_blacklisted, filter(has_email, keys))
+
+
 def load_key_ids_already_emailed(emails_sent_csv):
     if not os.path.exists(emails_sent_csv):
         with io.open(emails_sent_csv, 'w') as f:
             csv_writer = csv.DictWriter(f, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL)
             csv_writer.writeheader()
-        return []
+        return set([])
 
     return set([key.long_id for key in load_keys_from_csv(emails_sent_csv)])
 
