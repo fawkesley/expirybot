@@ -18,6 +18,7 @@ You don't need to create a new key.
 I've written a few short guides with screenshots for different software:
 
 - Enigmail with Thunderbird: https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
+- GPG Suite (GPG Keychain): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
 - GNU Privacy Guard (GnuPG): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
 
 (I'm currently working on Mailvelope and GPGTools - any others?)
