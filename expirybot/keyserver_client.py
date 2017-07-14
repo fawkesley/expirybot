@@ -25,13 +25,16 @@ class KeyserverClient:
         self.http_getter = http_getter or HttpGetterWithSessionAndUserAgent()
 
     def get_keys_for_short_id(self, short_id):
-        url = '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
-            self.keyserver, short_id
-        )
-
-        for key in KeyserverVindexParser(self.http_getter.get(url)).keys():
+        for key in self.do_vindex_search(short_id):
             if key.is_valid:
                 yield key
+
+    def do_vindex_search(self, search_query):
+        url = '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
+            self.keyserver, search_query
+        )
+
+        return KeyserverVindexParser(self.http_getter.get(url)).keys()
 
     #def get_key_for_fingerprint(self, fingerprint):
     #    """
