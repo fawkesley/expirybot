@@ -1,0 +1,13 @@
+#!/bin/sh -eux
+
+THIS_SCRIPT=$0
+THIS_DIR=$(dirname ${THIS_SCRIPT})
+
+
+evaluate_last_week() {
+  cd "${THIS_DIR}"
+  python3 -m expirybot.evaluate_last_week
+  cd -
+}
+
+evaluate_last_week
