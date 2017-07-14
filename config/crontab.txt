@@ -22,4 +22,4 @@ MAILTO="paul@paulfurley.com"
 @hourly crontab < ~/crontab.txt
 
 30 0 * * * ~/app/make_fingerprint_csv && ~/app/make_keys_expiring_csv
-9 14 * * * ~/app/send_emails
+3 12,13,14 * * * run-one ~/app/send_emails
