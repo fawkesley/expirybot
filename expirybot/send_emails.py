@@ -21,7 +21,7 @@ from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
 
-EMAILS_TO_SEND = 10
+EMAILS_TO_SEND = 300
 
 
 def main():
@@ -51,6 +51,7 @@ def main():
             if send_email(key):
                 write_key_to_csv(key, csv_writer)
                 key_ids_already_emailed.add(key.long_id)
+                time.sleep(30)
 
 
 def filter_emails(keys):
