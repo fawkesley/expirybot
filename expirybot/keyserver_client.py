@@ -31,7 +31,10 @@ class KeyserverClient:
                 yield key
 
     def get_key_for_fingerprint(self, fingerprint):
-        keys = list(self.do_vindex_search(fingerprint))
+        if not isinstance(fingerprint, Fingerprint):
+            fingerprint = Fingerprint(fingerprint)
+
+        keys = list(self.do_vindex_search(fingerprint.hex_format))
 
         if len(keys) != 1:
             raise RuntimeError('Expected 1 key for {}, got: {}'.format(
