@@ -77,6 +77,16 @@ class PGPKey:
         return self._fingerprint.to_long_id()
 
     @property
+    def has_expired(self, today=None):
+        if today is None:
+            today = datetime.date.today()
+
+        if self.expiry_date is None:
+            return False
+        else:
+            return self.expiry_date < today
+
+    @property
     def is_revoked(self):
         return self._revoked
 
