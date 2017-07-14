@@ -57,32 +57,6 @@ class KeyserverClient:
             self.keyserver, search_query
         )
 
-
-    #def get_key_for_fingerprint(self, fingerprint):
-    #    """
-    #    Search the keyservers for the fingerprint and return an ascii-armored
-    #    PGP key as a string.
-    #    e.g.
-    #    >>> get_key_for_fingerprint('A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517'  # noqa
-    #    '-----BEGIN PGP PUBLIC KEY BLOCK-----\n...'
-    #    """
-    #    if not isinstance(fingerprint, Fingerprint):
-    #        fingerprint = Fingerprint(fingerprint)
-
-    #    search_url = self.url_get_key_from_fingerprint(fingerprint)
-
-    #    pgp_key = PGPKey(self.http_getter.get(search_url))
-
-    #    if pgp_key.fingerprint != fingerprint:
-    #        raise SuspiciousKeyError(
-    #            'Requested a key from the keyserver with fingerprint {} '
-    #            'and got one back with fingerprint {}'.format(
-    #                fingerprint, pgp_key.fingerprint
-    #            )
-    #        )
-
-    #    return pgp_key
-
     def url_get_key_from_fingerprint(self, fingerprint):
         if not isinstance(fingerprint, Fingerprint):
             raise TypeError("Not a Fingerprint: `{}`".format(fingerprint))
