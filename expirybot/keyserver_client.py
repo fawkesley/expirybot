@@ -12,6 +12,7 @@ from urllib.parse import unquote
 import requests
 
 from .pgp_key import PGPKey, Fingerprint, OpenPGPVersion3FingerprintUnsupported
+from .exceptions import SuspiciousKeyError
 
 GPG_FINGERPRINT_PATTERN = '[A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4}  [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4}'  # noqa
 LOG = logging.getLogger(__name__)
@@ -28,6 +29,23 @@ class KeyserverClient:
         for key in self.do_vindex_search(short_id):
             if key.is_valid:
                 yield key
+
+    def get_key_for_fingerprint(self, fingerprint):
+        keys = list(self.do_vindex_search(fingerprint))
+
+        if len(keys) != 1:
+            raise RuntimeError('Expected 1 key for {}, got: {}'.format(
+                fingerprint, keys))
+
+        pgp_key = keys[0]
+
+        if pgp_key.fingerprint != fingerprint:
+            raise SuspiciousKeyError(
+                'Requested a key from the keyserver with fingerprint {} '
+                'and got one back with fingerprint {}'.format(
+                    fingerprint, pgp_key.fingerprint))
+
+        return pgp_key
 
     def do_vindex_search(self, search_query):
         url = '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
