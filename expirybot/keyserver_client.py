@@ -12,6 +12,7 @@ from urllib.parse import unquote
 import requests
 
 from .pgp_key import PGPKey, Fingerprint, OpenPGPVersion3FingerprintUnsupported
+from .exceptions import SuspiciousKeyError
 
 GPG_FINGERPRINT_PATTERN = '[A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4}  [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4} [A-F0-9]{4}'  # noqa
 LOG = logging.getLogger(__name__)
@@ -25,38 +26,39 @@ class KeyserverClient:
         self.http_getter = http_getter or HttpGetterWithSessionAndUserAgent()
 
     def get_keys_for_short_id(self, short_id):
-        url = '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
-            self.keyserver, short_id
-        )
-
-        for key in KeyserverVindexParser(self.http_getter.get(url)).keys():
+        for key in self.do_vindex_search(short_id):
             if key.is_valid:
                 yield key
 
-    #def get_key_for_fingerprint(self, fingerprint):
-    #    """
-    #    Search the keyservers for the fingerprint and return an ascii-armored
-    #    PGP key as a string.
-    #    e.g.
-    #    >>> get_key_for_fingerprint('A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517'  # noqa
-    #    '-----BEGIN PGP PUBLIC KEY BLOCK-----\n...'
-    #    """
-    #    if not isinstance(fingerprint, Fingerprint):
-    #        fingerprint = Fingerprint(fingerprint)
+    def get_key_for_fingerprint(self, fingerprint):
+        if not isinstance(fingerprint, Fingerprint):
+            fingerprint = Fingerprint(fingerprint)
 
-    #    search_url = self.url_get_key_from_fingerprint(fingerprint)
+        keys = list(self.do_vindex_search(fingerprint.hex_format))
 
-    #    pgp_key = PGPKey(self.http_getter.get(search_url))
+        if len(keys) != 1:
+            raise RuntimeError('Expected 1 key for {}, got: {}'.format(
+                fingerprint, keys))
 
-    #    if pgp_key.fingerprint != fingerprint:
-    #        raise SuspiciousKeyError(
-    #            'Requested a key from the keyserver with fingerprint {} '
-    #            'and got one back with fingerprint {}'.format(
-    #                fingerprint, pgp_key.fingerprint
-    #            )
-    #        )
+        pgp_key = keys[0]
 
-    #    return pgp_key
+        if pgp_key.fingerprint != fingerprint:
+            raise SuspiciousKeyError(
+                'Requested a key from the keyserver with fingerprint {} '
+                'and got one back with fingerprint {}'.format(
+                    fingerprint, pgp_key.fingerprint))
+
+        return pgp_key
+
+    def do_vindex_search(self, search_query):
+        url = self._make_vindex_url(search_query)
+
+        return KeyserverVindexParser(self.http_getter.get(url)).keys()
+
+    def _make_vindex_url(self, search_query):
+        return '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
+            self.keyserver, search_query
+        )
 
     def url_get_key_from_fingerprint(self, fingerprint):
         if not isinstance(fingerprint, Fingerprint):

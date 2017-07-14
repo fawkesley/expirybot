@@ -23,3 +23,4 @@ MAILTO="paul@paulfurley.com"
 
 30 0 * * * ~/app/make_fingerprint_csv && ~/app/make_keys_expiring_csv
 3 12,13,14 * * * run-one ~/app/send_emails
+0 12 * * * ~/app/evaluate_last_week

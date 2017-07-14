@@ -1,0 +1,2 @@
+class SuspiciousKeyError(RuntimeError):
+    pass
