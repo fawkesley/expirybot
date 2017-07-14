@@ -93,8 +93,8 @@ def email_results(results):
     request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
 
     email_subject = (
-        "{} / {} ({:.1f}%) emailed keys renewed vs "
-        "{} / {} ({:.1f}%) of remaining").format(
+        "{}/{} ({:.1f}%) renewed vs "
+        "{}/{} ({:.1f}%) not emailed").format(
                 results['keys_emailed_renewed'],
                 results['keys_emailed'],
                 results['keys_emailed_renewed_pct'],
