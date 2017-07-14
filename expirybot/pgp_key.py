@@ -189,6 +189,9 @@ class Fingerprint():
             other = Fingerprint(other)
         return self.hex_format == other.hex_format
 
+    def __hash__(self):
+        return hash(self._hex_digits)
+
     @property
     def hex_format(self):
         return '0x{}'.format(self._hex_digits)
