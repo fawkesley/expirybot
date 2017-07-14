@@ -48,11 +48,15 @@ class KeyserverClient:
         return pgp_key
 
     def do_vindex_search(self, search_query):
-        url = '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
+        url = self._make_vindex_url(search_query)
+
+        return KeyserverVindexParser(self.http_getter.get(url)).keys()
+
+    def _make_vindex_url(self, search_query):
+        return '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
             self.keyserver, search_query
         )
 
-        return KeyserverVindexParser(self.http_getter.get(url)).keys()
 
     #def get_key_for_fingerprint(self, fingerprint):
     #    """
