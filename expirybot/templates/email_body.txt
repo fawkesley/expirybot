@@ -21,7 +21,7 @@ I've written a few short guides with screenshots for different software:
 - GPG Suite (GPG Keychain): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
 - GNU Privacy Guard (GnuPG): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
 
-(I'm currently working on Mailvelope and GPGTools - any others?)
+(I'm currently working on Mailvelope - any others?)
 
 I hope this email has been helpful. If this feels like spam, I'm sorry :(
 
