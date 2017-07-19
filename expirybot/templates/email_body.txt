@@ -23,6 +23,10 @@ I've written a few short guides with screenshots for different software:
 
 (I'm currently working on Mailvelope - any others?)
 
+== Remember to push your updated key to the keyservers ==
+
+Once you've extended the expiry date, don't forget to push your key to the keyservers again so everyone can see the update.
+
 I hope this email has been helpful. If this feels like spam, I'm sorry :(
 
 Kind regards,
