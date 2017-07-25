@@ -5,9 +5,9 @@ This is a friendly reminder that your PGP key expires on {friendly_expiry_date}.
 fingerprint: {fingerprint}
 long key id: {key_id}
 
-Here's the key listed in the public keyserver that I run:
+Here's the key listed in the MIT public keyserver:
 
-https://keyserver.paulfurley.com/pks/lookup?op=vindex&search={key_id}
+https://pgp.mit.edu/pks/lookup?op=vindex&search={key_id}
 
 == Extend your key expiry date ==
 
