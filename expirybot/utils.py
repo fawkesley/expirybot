@@ -40,8 +40,15 @@ def load_keys_from_csv(csv_file):
 def write_key_to_csv(key, csv_writer):
     csv_writer.writerow({
         'fingerprint': key.fingerprint,
+        'algorithm_number': key.algorithm_number,
+        'size_bits': key.size_bits,
         'uids': '|'.join(key.uids),
-        'expiry_date': key.expiry_date.isoformat() if key.expiry_date else ''
+        'created_date': (
+            key.created_date.isoformat() if key.created_date else ''
+        ),
+        'expiry_date': (
+            key.expiry_date.isoformat() if key.expiry_date else ''
+        )
     })
 
 
