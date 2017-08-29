@@ -71,7 +71,15 @@ class KeyserverVindexParser:
         """
         pub:A856CF8734A8407B60E9DA269B08F1E400000000:1:4096:1331844405::
         """
-        (_, fingerprint, _, _, _, expiry_timestamp, flag) = line.split(':')
+        (
+            _,
+            fingerprint,
+            _,
+            _,
+            created_timestamp,
+            expiry_timestamp,
+            flag
+        ) = line.split(':')
 
         if flag != '' and flag != 'r':
             LOG.info('Got this key flag: `{}`'.format(flag))
@@ -80,6 +88,9 @@ class KeyserverVindexParser:
 
         if expiry_timestamp:
             key.set_expiry_timestamp(expiry_timestamp)
+
+        if created_timestamp:
+            key.set_created_timestamp(created_timestamp)
 
         if flag == 'r':
             key.set_revoked()

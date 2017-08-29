@@ -64,6 +64,14 @@ class TestKeyserverVindexParser(unittest.TestCase):
         assert_equal('Tobias Yüksel <Tobias.yueksel@googlemail.com>',
                      keys[0].uids[0])
 
+    def test_parse_created_date(self):
+        keys = self._parse_sample_file('vindex_paulfurley')
+        assert_equal(datetime.date(2014, 10, 31), keys[0].created_date)
+
+    def test_parse_empty_created_date_as_none(self):
+        keys = self._parse_sample_file('vindex_no_created')
+        assert_equal(None, keys[0].created_date)
+
     def test_parse_expiry_date(self):
         keys = self._parse_sample_file('vindex_paulfurley')
         assert_equal(datetime.date(2017, 12, 22), keys[0].expiry_date)
