@@ -1,8 +1,7 @@
 import logging
 from urllib.parse import unquote
 
-from .pgp_key import PGPKey, Fingerprint, OpenPGPVersion3FingerprintUnsupported
-from .exceptions import SuspiciousKeyError
+from .pgp_key import PGPKey, OpenPGPVersion3FingerprintUnsupported
 
 LOG = logging.getLogger(__name__)
 
