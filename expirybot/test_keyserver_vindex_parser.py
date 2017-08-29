@@ -88,6 +88,10 @@ class TestKeyserverVindexParser(unittest.TestCase):
         keys = self._parse_sample_file('vindex_revoked')
         assert_true(keys[0].is_revoked)
 
+    def test_size_bits_parses_as_integer(self):
+        keys = self._parse_sample_file('vindex_paulfurley')
+        assert_equal(4096, keys[0].size_bits)
+
     def _parse_sample_file(self, filename):
         with open_sample(filename) as f:
             parsed_keys = list(KeyserverVindexParser(f.read()).keys())

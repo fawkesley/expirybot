@@ -75,7 +75,7 @@ class KeyserverVindexParser:
             _,
             fingerprint,
             _,
-            _,
+            size_bits,
             created_timestamp,
             expiry_timestamp,
             flag
@@ -85,6 +85,9 @@ class KeyserverVindexParser:
             LOG.info('Got this key flag: `{}`'.format(flag))
 
         key.set_fingerprint(fingerprint)
+
+        if size_bits:
+            key.set_size_bits(size_bits)
 
         if expiry_timestamp:
             key.set_expiry_timestamp(expiry_timestamp)

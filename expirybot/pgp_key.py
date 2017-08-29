@@ -10,9 +10,10 @@ class OpenPGPVersion3FingerprintUnsupported(ValueError):
 
 
 class PGPKey:
-    def __init__(self, fingerprint=None, uids=None, expiry_date=None,
-                 created_date=None, **kwargs):
+    def __init__(self, fingerprint=None, size_bits=None,
+                 uids=None, expiry_date=None, created_date=None, **kwargs):
         self._fingerprint = None
+        self._size_bits = None
         self._created_date = None
         self._expiry_date = None
         self._uids = []
@@ -20,6 +21,9 @@ class PGPKey:
 
         if fingerprint is not None:
             self.set_fingerprint(fingerprint)
+
+        if size_bits is not None:
+            self.set_size_bits(size_bits)
 
         if uids is not None:
             for uid in uids.split('|'):
@@ -40,6 +44,12 @@ class PGPKey:
 
     def set_fingerprint(self, fingerprint):
         self._fingerprint = Fingerprint(fingerprint)
+
+    def set_size_bits(self, size_bits):
+        if not isinstance(size_bits, int):
+            size_bits = int(size_bits)
+
+        self._size_bits = size_bits
 
     def set_created_timestamp(self, timestamp):
         self._created_date = self._parse_timestamp(timestamp)
@@ -105,6 +115,10 @@ class PGPKey:
             return self.expiry_date.strftime('%A %d %B %Y')
         else:
             return None
+
+    @property
+    def size_bits(self):
+        return self._size_bits
 
     @property
     def created_date(self):
