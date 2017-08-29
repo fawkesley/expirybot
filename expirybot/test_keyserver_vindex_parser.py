@@ -68,14 +68,23 @@ class TestKeyserverVindexParser(unittest.TestCase):
         assert_true(got[1].is_revoked)
 
     def test_process_key_with_null_byte_in_uid(self):
-        with open_sample('vindex_null_byte') as f:
-            got = list(KeyserverVindexParser(f.read()).keys())
+        keys = self._parse_sample_file('vindex_null_byte')
 
-        assert_equal([], got)
+        assert_equal([], keys)
 
     def test_process_key_with_unicode_in_uid(self):
-        with open_sample('vindex_unicode') as f:
-            got = list(KeyserverVindexParser(f.read()).keys())
+        keys = self._parse_sample_file('vindex_unicode')
 
         assert_equal('Tobias Yüksel <Tobias.yueksel@googlemail.com>',
-                     got[0].uids[0])
+                     keys[0].uids[0])
+
+    def test_parse_expiry_date(self):
+        pass
+
+    def test_parse_empty_expiry_date_as_none(self):
+        pass
+
+    def _parse_sample_file(self, filename):
+        with open_sample(filename) as f:
+            parsed_keys = list(KeyserverVindexParser(f.read()).keys())
+            return parsed_keys
