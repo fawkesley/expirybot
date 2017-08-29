@@ -13,6 +13,7 @@ class PGPKey:
     def __init__(self, fingerprint=None, uids=None, expiry_date=None,
                  created_date=None, **kwargs):
         self._fingerprint = None
+        self._created_date = None
         self._expiry_date = None
         self._uids = []
         self._revoked = False
@@ -23,6 +24,9 @@ class PGPKey:
         if uids is not None:
             for uid in uids.split('|'):
                 self.add_uid(uid)
+
+        if created_date is not None:
+            self.set_created_date(created_date)
 
         if expiry_date is not None:
             self.set_expiry_date(expiry_date)
@@ -37,26 +41,17 @@ class PGPKey:
     def set_fingerprint(self, fingerprint):
         self._fingerprint = Fingerprint(fingerprint)
 
-    def set_expiry_timestamp(self, timestamp):
-        if not isinstance(timestamp, int):
-            timestamp = int(timestamp)
+    def set_created_timestamp(self, timestamp):
+        self._created_date = self._parse_timestamp(timestamp)
 
-        self._expiry_date = datetime.datetime.fromtimestamp(timestamp).date()
+    def set_expiry_timestamp(self, timestamp):
+        self._expiry_date = self._parse_timestamp(timestamp)
+
+    def set_created_date(self, date):
+        self._created_date = self._parse_date(date)
 
     def set_expiry_date(self, date):
-        if not date:
-            self._expiry_date = None
-
-        elif isinstance(date, datetime.date):
-            self._expiry_date = date
-
-        elif isinstance(date, str):
-            self._expiry_date = datetime.date(
-                *[int(part) for part in date.split('-')]
-            )
-
-        else:
-            raise TypeError('Unknown date format: {}'.format(date))
+        self._expiry_date = self._parse_date(date)
 
     def add_uid(self, uid_string):
         assert isinstance(uid_string, str)
@@ -112,6 +107,10 @@ class PGPKey:
             return None
 
     @property
+    def created_date(self):
+        return self._created_date
+
+    @property
     def expiry_date(self):
         return self._expiry_date
 
@@ -138,6 +137,32 @@ class PGPKey:
 
     def expires_in(self, days):
         return self.days_until_expiry == days
+
+    @staticmethod
+    def _parse_date(date):
+        """
+        Handle None, datetime.datetime(...) and 'YYYY-MM-DD'
+        """
+        if not date:
+            return date
+
+        elif isinstance(date, datetime.date):
+            return date
+
+        elif isinstance(date, str):
+            return datetime.date(
+                *[int(part) for part in date.split('-')]
+            )
+
+        else:
+            raise TypeError('Unknown date format: {}'.format(date))
+
+    @staticmethod
+    def _parse_timestamp(timestamp):
+        if not isinstance(timestamp, int):
+            timestamp = int(timestamp)
+
+        return datetime.datetime.fromtimestamp(timestamp).date()
 
 
 class Fingerprint():
