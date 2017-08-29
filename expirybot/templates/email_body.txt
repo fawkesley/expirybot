@@ -1,6 +1,6 @@
-Hello!
+Hi! I'm Paul and this email was sent by a friendly robot called Expirybot.
 
-This is a friendly reminder that your PGP key expires on {friendly_expiry_date}.
+This is a reminder that your PGP key expires on {friendly_expiry_date}.
 
 fingerprint: {fingerprint}
 long key id: {key_id}
@@ -38,6 +38,6 @@ Paul M Furley => Engineer / Developer
 
 Let's make it better! Trying to improve the world by making :)
 
+- Website: https://www.paulfurley.com/expirybot-emails-pgp-users-before-their-key-expires/
 - Twitter: https://twitter.com/paul_furley
-- Website: https://www.paulfurley.com
 - PGP: A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
