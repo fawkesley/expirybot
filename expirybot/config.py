@@ -12,6 +12,8 @@ DATA_DIR = abspath(pjoin(dirname(__file__), '..', 'data'))
 
 FINGERPRINT_CSV_HEADER = [
     'fingerprint',
+    'algorithm_number',
+    'size_bits',
     'uids',
     'created_date',
     'expiry_date',
