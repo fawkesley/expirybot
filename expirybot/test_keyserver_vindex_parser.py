@@ -92,6 +92,10 @@ class TestKeyserverVindexParser(unittest.TestCase):
         keys = self._parse_sample_file('vindex_paulfurley')
         assert_equal(4096, keys[0].size_bits)
 
+    def test_algorithm_number_parses_as_integer(self):
+        keys = self._parse_sample_file('vindex_paulfurley')
+        assert_equal(1, keys[0].algorithm_number)
+
     def _parse_sample_file(self, filename):
         with open_sample(filename) as f:
             parsed_keys = list(KeyserverVindexParser(f.read()).keys())
