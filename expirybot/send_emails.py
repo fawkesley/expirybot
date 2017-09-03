@@ -6,6 +6,7 @@
 - send emails to N people we haven't already emailed
 """
 
+import contextlib
 import csv
 import datetime
 import io
@@ -16,7 +17,9 @@ import requests
 
 from os.path import dirname, join as pjoin
 
-from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER, BLACKLISTED_DOMAINS
+from .config import (
+    MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER, BLACKLISTED_DOMAINS
+)
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
@@ -29,45 +32,82 @@ def main():
 
     today_data_dir = make_today_data_dir(datetime.date.today())
 
-    keys_expiring_csv = pjoin(today_data_dir, 'keys_expiring.csv')
-    emails_sent_csv = pjoin(today_data_dir, 'emails_sent.csv')
+    keys_expiring_fn = pjoin(today_data_dir, 'keys_expiring.csv')
+    emails_sent_fn = pjoin(today_data_dir, 'emails_sent.csv')
+    keys_excluded_fn = pjoin(today_data_dir, 'keys_excluded.csv')
 
-    key_ids_already_emailed = load_key_ids_already_emailed(emails_sent_csv)
+    key_ids_already_emailed = load_key_ids_already_emailed(
+        emails_sent_fn
+    )
     logging.info("Already sent {} emails".format(len(key_ids_already_emailed)))
 
-    with io.open(emails_sent_csv, 'a', 1) as g:
-        csv_writer = csv.DictWriter(g, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL)
+    with setup_output_csvs(emails_sent_fn, keys_excluded_fn) as \
+            (emails_sent_csv, keys_excluded_csv):
 
-        for key in filter_emails(load_keys_from_csv(keys_expiring_csv)):
-            if len(key_ids_already_emailed) >= EMAILS_TO_SEND:
-                logging.info("Stopping now, sent {} emails".format(
-                    len(key_ids_already_emailed)))
-                break
-
-            if key.long_id in key_ids_already_emailed:
-                logging.info("Already emailed key: {}".format(key))
-                continue
-
-            if send_email(key):
-                write_key_to_csv(key, csv_writer)
-                key_ids_already_emailed.add(key.long_id)
-                time.sleep(30)
+        send_emails_for_keys(
+            load_keys_from_csv(keys_expiring_fn),
+            emails_sent_csv,
+            keys_excluded_csv,
+            key_ids_already_emailed
+        )
 
 
-def filter_emails(keys):
-    def has_email(key):
-        return key.primary_email is not None
+@contextlib.contextmanager
+def setup_output_csvs(emails_sent_fn, keys_excluded_fn):
 
-    def not_blacklisted(key):
+    with io.open(emails_sent_fn, 'a', 1) as f,\
+            io.open(keys_excluded_fn, 'w') as g:
+
+        emails_sent_csv = csv.DictWriter(
+            f, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL
+        )
+
+        keys_excluded_csv = csv.DictWriter(
+            g, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL
+        )
+        keys_excluded_csv.writeheader()
+
+        yield emails_sent_csv, keys_excluded_csv
+
+
+def send_emails_for_keys(keys, emails_sent_csv, keys_excluded_csv,
+                         key_ids_already_emailed):
+
+    for key in keys:
+        if len(key_ids_already_emailed) >= EMAILS_TO_SEND:
+            logging.info("Stopping now, sent {} emails".format(
+                len(key_ids_already_emailed)))
+            break
+
+        if key.long_id in key_ids_already_emailed:
+            logging.info("Already emailed key: {}".format(key))
+
+        elif should_exclude_key(key):
+            write_key_to_csv(key, keys_excluded_csv)
+
+        elif send_email(key):
+            write_key_to_csv(key, emails_sent_csv)
+            key_ids_already_emailed.add(key.long_id)
+            time.sleep(30)
+
+
+def should_exclude_key(key):
+    def missing_email(key):
+        logging.warn("Skipping key without email: {}".format(
+            key.fingerprint))
+        return key.primary_email is None
+
+    def blacklisted(key):
         _, domain = key.primary_email.split('@', 1)
         blacklisted = domain.lower() in BLACKLISTED_DOMAINS
 
         if blacklisted:
-            logging.info("Skipping blacklisted domain: {}".format(key.primary_email))
+            logging.warn("Skipping blacklisted domain: {}".format(
+                key.primary_email))
 
-        return not blacklisted
+        return blacklisted
 
-    return filter(not_blacklisted, filter(has_email, keys))
+    return blacklisted(key) or missing_email(key)
 
 
 def load_key_ids_already_emailed(emails_sent_csv):
