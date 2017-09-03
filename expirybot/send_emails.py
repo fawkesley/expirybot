@@ -24,6 +24,8 @@ from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
 
+from .is_strong_key import is_strong_key
+
 EMAILS_TO_SEND = 300
 
 
@@ -107,7 +109,7 @@ def should_exclude_key(key):
 
         return blacklisted
 
-    return blacklisted(key) or missing_email(key)
+    return blacklisted(key) or missing_email(key) or not is_strong_key(key)
 
 
 def load_key_ids_already_emailed(emails_sent_csv):
