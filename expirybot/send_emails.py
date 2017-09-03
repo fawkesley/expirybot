@@ -47,7 +47,8 @@ def main():
         send_emails_for_keys(
             load_keys_from_csv(keys_expiring_fn),
             emails_sent_csv,
-            keys_excluded_csv
+            keys_excluded_csv,
+            key_ids_already_emailed
         )
 
 
@@ -64,6 +65,7 @@ def setup_output_csvs(emails_sent_fn, keys_excluded_fn):
         keys_excluded_csv = csv.DictWriter(
             g, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL
         )
+        keys_excluded_csv.writeheader()
 
         yield emails_sent_csv, keys_excluded_csv
 
@@ -79,11 +81,9 @@ def send_emails_for_keys(keys, emails_sent_csv, keys_excluded_csv,
 
         if key.long_id in key_ids_already_emailed:
             logging.info("Already emailed key: {}".format(key))
-            continue
 
-        if should_exclude_key(key):
+        elif should_exclude_key(key):
             write_key_to_csv(key, keys_excluded_csv)
-            continue
 
         elif send_email(key):
             write_key_to_csv(key, emails_sent_csv)
@@ -93,6 +93,8 @@ def send_emails_for_keys(keys, emails_sent_csv, keys_excluded_csv,
 
 def should_exclude_key(key):
     def missing_email(key):
+        logging.warn("Skipping key without email: {}".format(
+            key.fingerprint))
         return key.primary_email is None
 
     def blacklisted(key):
@@ -100,7 +102,7 @@ def should_exclude_key(key):
         blacklisted = domain.lower() in BLACKLISTED_DOMAINS
 
         if blacklisted:
-            logging.info("Skipping blacklisted domain: {}".format(
+            logging.warn("Skipping blacklisted domain: {}".format(
                 key.primary_email))
 
         return blacklisted
