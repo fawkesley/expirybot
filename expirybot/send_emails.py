@@ -24,6 +24,8 @@ from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
 
+from .is_strong_key import is_strong_key
+
 EMAILS_TO_SEND = 300
 
 
@@ -92,22 +94,36 @@ def send_emails_for_keys(keys, emails_sent_csv, keys_excluded_csv,
 
 
 def should_exclude_key(key):
-    def missing_email(key):
+    if not is_strong_key(key):
+        logging.warn("Skipping weak key: {}".format(
+            key.fingerprint))
+        return True
+
+    elif blacklisted(key):
+        logging.warn("Skipping blacklisted domain: {}".format(
+            key.primary_email))
+        return True
+
+    elif missing_email(key):
         logging.warn("Skipping key without email: {}".format(
             key.fingerprint))
-        return key.primary_email is None
+        return True
 
-    def blacklisted(key):
-        _, domain = key.primary_email.split('@', 1)
-        blacklisted = domain.lower() in BLACKLISTED_DOMAINS
+    else:
+        return False
 
-        if blacklisted:
-            logging.warn("Skipping blacklisted domain: {}".format(
-                key.primary_email))
 
-        return blacklisted
+def missing_email(key):
+    missing_email = key.primary_email is None
+    return missing_email
 
-    return blacklisted(key) or missing_email(key)
+
+def blacklisted(key):
+    if key.primary_email is None:
+        return False
+
+    _, domain = key.primary_email.split('@', 1)
+    return domain.lower() in BLACKLISTED_DOMAINS
 
 
 def load_key_ids_already_emailed(emails_sent_csv):
@@ -140,7 +156,7 @@ def send_email(key):
 
     to = key.primary_email
 
-    logging.info("About to send email to {}:\nSubject: {}\n{}".format(
+    logging.debug("About to send email to {}:\nSubject: {}\n{}".format(
         to, email_subject, email_body)
     )
     time.sleep(5)
