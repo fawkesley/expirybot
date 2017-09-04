@@ -16,7 +16,7 @@ from os.path import join as pjoin
 
 import requests
 
-from .utils import load_keys_from_csv, make_today_data_dir
+from .utils import load_keys_from_csv, make_today_data_dir, setup_logging
 from .keyserver_client import KeyserverClient
 from .config import MAILGUN_API_KEY
 
@@ -26,7 +26,7 @@ def main():
     one_week_ago = today - datetime.timedelta(days=7)
 
     one_week_ago_data_dir = make_today_data_dir(one_week_ago)
-    setup_logging(one_week_ago_data_dir)
+    setup_logging(pjoin(one_week_ago_data_dir, 'evaluate.log'))
 
     logging.info("It's {} and I'm evaluating the performance of {}".format(
         today, one_week_ago))
@@ -136,13 +136,6 @@ def count_renewed_keys(fingerprints):
             count += 1
 
     return count
-
-
-def setup_logging(one_week_ago_data_dir):
-    log_filename = pjoin(one_week_ago_data_dir, 'evaluate.log')
-    logging.basicConfig(level=logging.INFO,
-                        filename=log_filename,
-                        format='%(asctime)s %(levelname)s %(message)s')
 
 
 if __name__ == '__main__':

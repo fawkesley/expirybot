@@ -1,5 +1,6 @@
 import csv
 import io
+import logging
 import os
 
 from os.path import join as pjoin
@@ -22,6 +23,12 @@ def make_atomic_csv_writer(output_filename, header):
             atomic_filename(output_filename),
             output_filename
         )
+
+
+def setup_logging(log_filename):
+    logging.basicConfig(level=logging.INFO,
+                        filename=log_filename,
+                        format='%(asctime)s %(levelname)s %(message)s')
 
 
 def atomic_filename(filename):
