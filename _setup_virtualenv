@@ -1,0 +1,20 @@
+#!/bin/sh -eux
+
+THIS_SCRIPT=$0
+THIS_DIR=$(dirname ${THIS_SCRIPT})
+
+REQUIREMENTS_HASH=$(sha1sum ${THIS_DIR}/requirements.txt | cut '-d ' -f1)
+
+VENV_DIR="${THIS_DIR}/venv/${REQUIREMENTS_HASH}"
+
+setup_virtualenv() {
+  virtualenv -p $(which python3) "${VENV_DIR}"
+  
+  set +u
+  . "${VENV_DIR}/bin/activate"
+  set -u
+  
+  pip install -r "${THIS_DIR}/requirements.txt"
+}
+
+setup_virtualenv

@@ -3,6 +3,8 @@
 THIS_SCRIPT=$0
 THIS_DIR=$(dirname ${THIS_SCRIPT})
 
+. ${THIS_DIR}/_setup_virtualenv
+
 
 evaluate_last_week() {
   cd "${THIS_DIR}"
