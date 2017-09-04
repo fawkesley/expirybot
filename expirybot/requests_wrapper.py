@@ -24,4 +24,4 @@ class RequestsWithSessionAndUserAgent:
             'PGP key email verify bot bot@paulfurley.com'
         )
 
-        return self.session.method(method, url, *args, **kwargs)
+        return self.session.request(method, url, *args, **kwargs)
