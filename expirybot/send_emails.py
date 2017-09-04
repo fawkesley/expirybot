@@ -115,7 +115,7 @@ def send_email(key):
     logging.info("send_email: {}".format(key))
 
     email = ExpiryEmail(key)
-    send_with_mailgun(email)
+    return send_with_mailgun(email)
 
 
 def send_with_mailgun(email):
