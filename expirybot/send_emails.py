@@ -12,10 +12,11 @@ import datetime
 import io
 import logging
 import os
-import time
 import requests
 
 from os.path import dirname, join as pjoin
+
+import ratelimit
 
 from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER
 from .requests_wrapper import RequestsWithSessionAndUserAgent
@@ -94,7 +95,6 @@ def send_emails_for_keys(keys, emails_sent_csv, key_ids_already_emailed):
         elif send_email(key):
             write_key_to_csv(key, emails_sent_csv)
             key_ids_already_emailed.add(key.long_id)
-            time.sleep(30)
 
 
 def load_key_ids_already_emailed(emails_sent_csv):
@@ -119,6 +119,10 @@ def send_email(key):
     return send_with_mailgun(email)
 
 
+ONE_HOUR = 60 * 60
+
+
+@ratelimit.rate_limited(100, ONE_HOUR)
 def send_with_mailgun(email, http=None):
 
     http = http or RequestsWithSessionAndUserAgent()
@@ -126,7 +130,6 @@ def send_with_mailgun(email, http=None):
     logging.debug("About to send email to {}:\nSubject: {}\n{}".format(
         email.to, email.subject, email.body)
     )
-    time.sleep(5)
 
     domain = 'keyserver.paulfurley.com'
 
