@@ -26,6 +26,25 @@ from .utils import (
 EMAILS_TO_SEND = 300
 
 
+class ExpiryEmail():
+    def __init__(self, key):
+        data = {
+            'fingerprint': key.fingerprint,
+            'key_id': key.long_id,
+            'friendly_expiry_date': key.friendly_expiry_date,
+            'days_until_expiry': key.days_until_expiry
+        }
+
+        self.body = load_template('email_body.txt').format(**data)
+        self.subject = load_template(
+            'email_subject.txt'
+        ).format(**data).rstrip()
+
+        self.to = key.primary_email
+        self.from_line = '"Paul M Furley" <paul@keyserver.paulfurley.com>'
+        self.reply_to = 'paul@paulfurley.com'
+
+
 def main():
     logging.basicConfig(level=logging.INFO)
 
@@ -95,20 +114,14 @@ def load_template(name):
 def send_email(key):
     logging.info("send_email: {}".format(key))
 
-    data = {
-        'fingerprint': key.fingerprint,
-        'key_id': key.long_id,
-        'friendly_expiry_date': key.friendly_expiry_date,
-        'days_until_expiry': key.days_until_expiry
-    }
+    email = ExpiryEmail(key)
+    return send_with_mailgun(email)
 
-    email_body = load_template('email_body.txt').format(**data)
-    email_subject = load_template('email_subject.txt').format(**data)
 
-    to = key.primary_email
+def send_with_mailgun(email):
 
     logging.debug("About to send email to {}:\nSubject: {}\n{}".format(
-        to, email_subject, email_body)
+        email.to, email.subject, email.body)
     )
     time.sleep(5)
 
@@ -121,11 +134,11 @@ def send_email(key):
             request_url,
             auth=('api', MAILGUN_API_KEY),
             data={
-                'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
-                'to': to,
-                'h:Reply-To': 'paul@paulfurley.com',
-                'subject': email_subject,
-                'text': email_body
+                'from': email.from_line,
+                'to': email.to,
+                'h:Reply-To': email.reply_to,
+                'subject': email.subject,
+                'text': email.body
                 }
             )
     except Exception as e:
