@@ -16,7 +16,8 @@ from os.path import join as pjoin
 from .config import DATA_DIR, FINGERPRINT_CSV_HEADER, KEYSERVER
 from .keyserver_client import KeyserverClient
 from .utils import (
-    make_atomic_csv_writer, write_key_to_csv, make_today_data_dir
+    make_atomic_csv_writer, write_key_to_csv, make_today_data_dir,
+    setup_logging
 )
 
 
@@ -24,7 +25,7 @@ def main():
     short_ids_file = sys.argv[1]
 
     today_data_dir = make_today_data_dir(datetime.date.today())
-    setup_logging(today_data_dir)
+    setup_logging(pjoin(today_data_dir, 'make_fingerprint_csv.log'))
 
     short_id_count = 0
     keys_parsed_count = 0
@@ -50,13 +51,6 @@ def main():
 
     logging.info("Attempted to check {} short ids. Parsed {} keys.".format(
         short_id_count, keys_parsed_count))
-
-
-def setup_logging(today_data_dir):
-    log_filename = pjoin(today_data_dir, 'make_fingerprint_csv.log')
-    logging.basicConfig(level=logging.INFO,
-                        filename=log_filename,
-                        format='%(asctime)s %(levelname)s %(message)s')
 
 
 def read_short_ids(filename):

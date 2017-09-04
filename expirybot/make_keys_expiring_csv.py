@@ -15,7 +15,7 @@ from os.path import join as pjoin
 from .config import DATA_DIR, FINGERPRINT_CSV_HEADER as CSV_HEADER
 from .utils import (
     make_atomic_csv_writer, write_key_to_csv, load_keys_from_csv,
-    make_today_data_dir
+    make_today_data_dir, setup_logging
 )
 
 from .exclusions import is_strong_key, is_blacklisted_domain, has_missing_email
@@ -32,7 +32,7 @@ class Stats:
 
 def main():
     today_data_dir = make_today_data_dir(datetime.date.today())
-    setup_logging(today_data_dir)
+    setup_logging(pjoin(today_data_dir, 'make_keys_expiring_csv.log'))
 
     stats = Stats()
 
@@ -91,13 +91,6 @@ def should_exclude(key):
 
     else:
         return False
-
-
-def setup_logging(today_data_dir):
-    log_filename = pjoin(today_data_dir, 'make_keys_expiring_csv.log')
-    logging.basicConfig(level=logging.INFO,
-                        filename=log_filename,
-                        format='%(asctime)s %(levelname)s %(message)s')
 
 
 if __name__ == '__main__':

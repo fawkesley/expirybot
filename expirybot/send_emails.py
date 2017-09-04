@@ -21,7 +21,7 @@ import ratelimit
 from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER
 from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
-    make_today_data_dir, load_keys_from_csv, write_key_to_csv
+    make_today_data_dir, load_keys_from_csv, write_key_to_csv, setup_logging
 )
 
 
@@ -48,9 +48,9 @@ class ExpiryEmail():
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
-
     today_data_dir = make_today_data_dir(datetime.date.today())
+
+    setup_logging(pjoin(today_data_dir, 'send_emails.log'))
 
     keys_expiring_fn = pjoin(today_data_dir, 'keys_expiring.csv')
     emails_sent_fn = pjoin(today_data_dir, 'emails_sent.csv')
@@ -93,8 +93,14 @@ def send_emails_for_keys(keys, emails_sent_csv, key_ids_already_emailed):
             logging.info("Already emailed key: {}".format(key))
 
         elif send_email(key):
+            logging.info("Emailed {} - {}".format(key.primary_email, key))
             write_key_to_csv(key, emails_sent_csv)
             key_ids_already_emailed.add(key.long_id)
+
+        else:
+            logging.warn("Failed emailing {} - {}".format(
+                key.primary_email, key)
+            )
 
 
 def load_key_ids_already_emailed(emails_sent_csv):
