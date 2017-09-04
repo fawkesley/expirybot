@@ -36,7 +36,9 @@ class ExpiryEmail():
         }
 
         self.body = load_template('email_body.txt').format(**data)
-        self.subject = load_template('email_subject.txt').format(**data)
+        self.subject = load_template(
+            'email_subject.txt'
+        ).format(**data).rstrip()
 
         self.to = key.primary_email
         self.from_line = '"Paul M Furley" <paul@keyserver.paulfurley.com>'
