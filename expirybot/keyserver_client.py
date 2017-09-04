@@ -8,8 +8,7 @@ import shlex
 import subprocess
 from os.path import join as pjoin
 
-import requests
-
+from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .pgp_key import Fingerprint
 from .exceptions import SuspiciousKeyError
 from .keyserver_vindex_parser import KeyserverVindexParser
@@ -23,7 +22,7 @@ class KeyserverClient:
                  http_getter=None):
         self.keyserver = keyserver
 
-        self.http_getter = http_getter or HttpGetterWithSessionAndUserAgent()
+        self.http_getter = http_getter or RequestsWithSessionAndUserAgent()
 
     def get_keys_for_short_id(self, short_id):
         for key in self.do_vindex_search(short_id):
@@ -53,7 +52,7 @@ class KeyserverClient:
     def do_vindex_search(self, search_query):
         url = self._make_vindex_url(search_query)
 
-        return KeyserverVindexParser(self.http_getter.get(url)).keys()
+        return KeyserverVindexParser(self.http_getter.get_content(url)).keys()
 
     def _make_vindex_url(self, search_query):
         return '{}/pks/lookup?search={}&op=vindex&options=mr'.format(
@@ -213,21 +212,3 @@ class GPGCommandLineParser():
         """
 
         return datetime.date(*map(int, string.split('-')))
-
-
-
-class HttpGetterWithSessionAndUserAgent:
-    def __init__(self):
-        self.session = requests.Session()
-
-    def get(self, url, *args, **kwargs):
-        if 'headers' not in kwargs:
-            kwargs['headers'] = {}
-
-        kwargs['headers']['user-agent'] = (
-            'PGP key email verify bot bot@paulfurley.com'
-        )
-
-        response = self.session.get(url, *args, **kwargs)
-        response.raise_for_status()
-        return response.content
