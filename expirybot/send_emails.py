@@ -18,6 +18,7 @@ import requests
 from os.path import dirname, join as pjoin
 
 from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER
+from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv
 )
@@ -118,7 +119,9 @@ def send_email(key):
     return send_with_mailgun(email)
 
 
-def send_with_mailgun(email):
+def send_with_mailgun(email, http=None):
+
+    http = http or RequestsWithSessionAndUserAgent()
 
     logging.debug("About to send email to {}:\nSubject: {}\n{}".format(
         email.to, email.subject, email.body)
@@ -130,7 +133,7 @@ def send_with_mailgun(email):
     request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
 
     try:
-        response = requests.post(
+        response = http.post(
             request_url,
             auth=('api', MAILGUN_API_KEY),
             data={
