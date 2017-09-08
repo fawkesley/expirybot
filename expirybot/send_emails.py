@@ -128,7 +128,7 @@ def send_email(key):
 ONE_HOUR = 60 * 60
 
 
-@ratelimit.rate_limited(100, ONE_HOUR)
+@ratelimit.rate_limited(99, ONE_HOUR)
 def send_with_mailgun(email, http=None):
 
     http = http or RequestsWithSessionAndUserAgent()
