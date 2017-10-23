@@ -137,9 +137,9 @@ def send_with_mailgun(email, http=None):
         email.to, email.subject, email.body)
     )
 
-    domain = 'keyserver.paulfurley.com'
-
-    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
+    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(
+        config.mailgun_domain
+    )
 
     try:
         response = http.post(

@@ -89,8 +89,9 @@ def dump_results_to_json(results, filename):
 
 
 def email_results(results):
-    domain = 'keyserver.paulfurley.com'
-    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
+    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(
+        config.mailgun_domain
+    )
 
     email_subject = (
         "{}/{} ({:.1f}%) renewed vs "
