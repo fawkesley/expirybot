@@ -19,7 +19,7 @@ class TestExpiryEmailClass(unittest.TestCase):
             fingerprint='A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517',
             algorithm_number=1,
             size_bits=4096,
-            uids='Paul Furley <paul1@example.com>|Paul <paul2@example.com',
+            uids='Paul F <paul1@example.com>|Paul (new) <paul2@example.com>',
             expiry_date=datetime.date(2017, 12, 4),
             created_date=None
         )
@@ -59,7 +59,7 @@ class TestExpiryEmailClass(unittest.TestCase):
 
     def test_to(self):
         assert_equal(
-            'paul1@example.com',
+            'Paul F <paul1@example.com>, Paul <paul2@example.com>',
             self.expiry_email.to
         )
 
