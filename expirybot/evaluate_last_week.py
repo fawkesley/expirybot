@@ -18,7 +18,7 @@ import requests
 
 from .utils import load_keys_from_csv, make_today_data_dir, setup_logging
 from .keyserver_client import KeyserverClient
-from .config import MAILGUN_API_KEY
+from .config import config
 
 
 def main():
@@ -108,7 +108,7 @@ def email_results(results):
     try:
         response = requests.post(
             request_url,
-            auth=('api', MAILGUN_API_KEY),
+            auth=('api', config.mailgun_api_key),
             data={
                 'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
                 'to': 'paul@paulfurley.com',

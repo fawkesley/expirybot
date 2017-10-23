@@ -12,7 +12,7 @@ import logging
 
 from os.path import join as pjoin
 
-from .config import DATA_DIR, FINGERPRINT_CSV_HEADER as CSV_HEADER
+from .config import config
 from .utils import (
     make_atomic_csv_writer, write_key_to_csv, load_keys_from_csv,
     make_today_data_dir, setup_logging
@@ -36,7 +36,7 @@ def main():
 
     stats = Stats()
 
-    all_keys_fn = pjoin(DATA_DIR, 'keys.csv')
+    all_keys_fn = pjoin(config.data_dir, 'keys.csv')
     expiring_fn = pjoin(today_data_dir, 'keys_expiring.csv')
     excluded_fn = pjoin(today_data_dir, 'keys_excluded.csv')
 
@@ -67,8 +67,8 @@ def handle_key(key, expiring_csv, excluded_csv, stats):
 @contextlib.contextmanager
 def setup_output_csvs(expiring_fn, excluded_fn):
 
-    with make_atomic_csv_writer(expiring_fn, CSV_HEADER) as expiring_csv, \
-         make_atomic_csv_writer(excluded_fn, CSV_HEADER) as excluded_csv:
+    with make_atomic_csv_writer(expiring_fn, config.csv_header) as expiring_csv, \
+         make_atomic_csv_writer(excluded_fn, config.csv_header) as excluded_csv:
 
         yield (expiring_csv, excluded_csv)
 

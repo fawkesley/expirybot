@@ -5,7 +5,7 @@ import os
 
 from os.path import join as pjoin
 from contextlib import contextmanager
-from .config import DATA_DIR
+from .config import config
 
 from .pgp_key import PGPKey
 
@@ -39,7 +39,7 @@ def atomic_filename(filename):
 def load_keys_from_csv(csv_file):
     csv.field_size_limit(500 * 1024 * 1024)
 
-    with io.open(pjoin(DATA_DIR, csv_file), 'rt') as f:
+    with io.open(pjoin(config.data_dir, csv_file), 'rt') as f:
         for row in csv.DictReader(f):
             yield PGPKey(**row)
 
@@ -60,4 +60,4 @@ def write_key_to_csv(key, csv_writer):
 
 
 def make_today_data_dir(today):
-    return pjoin(DATA_DIR, today.isoformat())
+    return pjoin(config.data_dir, today.isoformat())
