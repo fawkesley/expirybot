@@ -9,6 +9,7 @@ import freezegun
 from .send_emails import ExpiryEmail
 from .pgp_key import PGPKey
 from .test_utils import open_sample, sample_filename
+from .config import config
 
 
 class TestExpiryEmailClass(unittest.TestCase):
@@ -22,6 +23,9 @@ class TestExpiryEmailClass(unittest.TestCase):
             expiry_date=datetime.date(2017, 12, 4),
             created_date=None
         )
+
+        config.reply_to = 'reply-to@example.com'
+        config.from_line = 'from-line@example.com'
 
         with freezegun.freeze_time(datetime.date(2017, 12, 1)):
             cls.expiry_email = ExpiryEmail(key)
@@ -61,12 +65,12 @@ class TestExpiryEmailClass(unittest.TestCase):
 
     def test_from_line(self):
         assert_equal(
-            '"Paul M Furley" <paul@keyserver.paulfurley.com>',
+            'from-line@example.com',
             self.expiry_email.from_line
         )
 
     def test_reply_to(self):
         assert_equal(
-            '"Paul M Furley" <paul@paulfurley.com>',
+            'reply-to@example.com',
             self.expiry_email.reply_to
         )
