@@ -20,7 +20,7 @@ class TestKeyserverClient(unittest.TestCase):
         http_getter = cls.MockHttpGetter()
 
         with open_sample('vindex_paulfurley') as f:
-            http_getter.get = MagicMock(return_value=f.read())
+            http_getter.get_content = MagicMock(return_value=f.read())
 
         cls.client = KeyserverClient(
             keyserver='http://a.com',
