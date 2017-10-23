@@ -160,6 +160,26 @@ class PGPKey:
         if match:
             return match.group('email')
 
+    @staticmethod
+    def _parse_uid_as_email_line(uid):
+        patterns = [
+            r'^(?P<name>.*?) *\(.*\) *<(?P<email>.+@.+\..+)>$',
+            r'^(?P<email>.+@.+\..+)$',  # paul@example.com
+        ]
+
+        for pattern in patterns:
+            match = re.match(pattern, uid)
+
+            if match is None:
+                continue
+
+            if match.groupdict().get('name', ''):
+                return '{} <{}>'.format(
+                    match.group('name'), match.group('email')
+                )
+            else:
+                return match.group('email')
+
     def expires_in(self, days):
         return self.days_until_expiry == days
 
