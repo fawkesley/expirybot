@@ -1,0 +1,13 @@
+language: python
+python:
+  - 3.5
+branches:
+  except:
+   - release
+   - /^release_\d+$/
+install:
+    - pip install -r requirements.txt
+script:
+  - make test
+notifications:
+  email: false
