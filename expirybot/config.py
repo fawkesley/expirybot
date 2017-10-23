@@ -32,6 +32,10 @@ class Config():
             'keyserver', 'http://pool.sks-keyservers.net:11371'
         )
 
+        self.user_agent = config.get(
+            'user_agent', self._default_user_agent()
+        )
+
     @property
     def data_dir(self):
         return abspath(pjoin(dirname(__file__), '..', 'data'))
@@ -46,6 +50,15 @@ class Config():
             'created_date',
             'expiry_date',
         ]
+
+    def _default_user_agent(self):
+        username = getpass.getuser()
+        hostname = platform.node()
+
+        return '{} {user}@{hostname}'.format(
+            requests.utils.default_user_agent(),
+            user=username,
+            hostname=hostname)
 
 
 config = Config()
