@@ -25,7 +25,7 @@ from .utils import (
 )
 
 
-EMAILS_TO_SEND = 300
+EMAILS_TO_SEND = 500
 
 
 class ExpiryEmail():
