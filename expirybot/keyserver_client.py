@@ -8,6 +8,7 @@ import shlex
 import subprocess
 from os.path import join as pjoin
 
+from .config import config
 from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .pgp_key import Fingerprint
 from .exceptions import SuspiciousKeyError
@@ -18,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 
 class KeyserverClient:
-    def __init__(self, keyserver='https://keyserver.paulfurley.com',
+    def __init__(self, keyserver=config.keyserver,
                  http_getter=None):
         self.keyserver = keyserver
 

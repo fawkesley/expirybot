@@ -18,7 +18,7 @@ from os.path import dirname, join as pjoin
 
 import ratelimit
 
-from .config import MAILGUN_API_KEY, FINGERPRINT_CSV_HEADER
+from .config import config
 from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv, setup_logging
@@ -75,7 +75,7 @@ def setup_output_csvs(emails_sent_fn):
     with io.open(emails_sent_fn, 'a', 1) as f:
 
         emails_sent_csv = csv.DictWriter(
-            f, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL
+            f, config.csv_header, quoting=csv.QUOTE_ALL
         )
 
         yield emails_sent_csv
@@ -106,7 +106,7 @@ def send_emails_for_keys(keys, emails_sent_csv, key_ids_already_emailed):
 def load_key_ids_already_emailed(emails_sent_csv):
     if not os.path.exists(emails_sent_csv):
         with io.open(emails_sent_csv, 'w') as f:
-            csv_writer = csv.DictWriter(f, FINGERPRINT_CSV_HEADER, quoting=csv.QUOTE_ALL)
+            csv_writer = csv.DictWriter(f, config.csv_header, quoting=csv.QUOTE_ALL)
             csv_writer.writeheader()
         return set([])
 
@@ -144,7 +144,7 @@ def send_with_mailgun(email, http=None):
     try:
         response = http.post(
             request_url,
-            auth=('api', MAILGUN_API_KEY),
+            auth=('api', config.mailgun_api_key),
             data={
                 'from': email.from_line,
                 'to': email.to,
