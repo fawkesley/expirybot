@@ -12,7 +12,6 @@ import datetime
 import io
 import logging
 import os
-import requests
 
 from os.path import dirname, join as pjoin
 
@@ -106,7 +105,8 @@ def send_emails_for_keys(keys, emails_sent_csv, key_ids_already_emailed):
 def load_key_ids_already_emailed(emails_sent_csv):
     if not os.path.exists(emails_sent_csv):
         with io.open(emails_sent_csv, 'w') as f:
-            csv_writer = csv.DictWriter(f, config.csv_header, quoting=csv.QUOTE_ALL)
+            csv_writer = csv.DictWriter(
+                f, config.csv_header, quoting=csv.QUOTE_ALL)
             csv_writer.writeheader()
         return set([])
 
