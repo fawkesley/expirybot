@@ -152,10 +152,10 @@ class PGPKey:
 
     @property
     def emails(self):
-        return list(filter(None, map(self._parse_email, self.uids)))
+        return list(filter(None, map(self._parse_uid_as_email, self.uids)))
 
     @staticmethod
-    def _parse_email(uid):
+    def _parse_uid_as_email(uid):
         match = re.match('.*<(?P<email>.+@.+)>$', uid)
         if match:
             return match.group('email')
