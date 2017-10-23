@@ -1,3 +1,5 @@
+from .config import config
+
 import requests
 
 
@@ -20,8 +22,6 @@ class RequestsWithSessionAndUserAgent:
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
 
-        kwargs['headers']['user-agent'] = (
-            'PGP key email verify bot bot@paulfurley.com'
-        )
+        kwargs['headers']['user-agent'] = config.user_agent
 
         return self.session.request(method, url, *args, **kwargs)
