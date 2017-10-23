@@ -14,11 +14,10 @@ import json
 from collections import OrderedDict
 from os.path import join as pjoin
 
-import requests
-
 from .utils import load_keys_from_csv, make_today_data_dir, setup_logging
 from .keyserver_client import KeyserverClient
 from .config import config
+from .requests_wrapper import RequestsWithSessionAndUserAgent
 
 
 def main():
@@ -88,9 +87,12 @@ def dump_results_to_json(results, filename):
         json.dump(results, f, indent=4)
 
 
-def email_results(results):
-    domain = 'keyserver.paulfurley.com'
-    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
+def email_results(results, http=None):
+    http = http or RequestsWithSessionAndUserAgent()
+
+    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(
+        config.mailgun_domain
+    )
 
     email_subject = (
         "{}/{} ({:.1f}%) renewed vs "
@@ -106,12 +108,12 @@ def email_results(results):
     email_body = json.dumps(results, indent=4)
 
     try:
-        response = requests.post(
+        response = http.post(
             request_url,
             auth=('api', config.mailgun_api_key),
             data={
-                'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
-                'to': 'paul@paulfurley.com',
+                'from': config.from_line,
+                'to': config.evaluation_email,
                 'subject': email_subject,
                 'text': email_body
                 }

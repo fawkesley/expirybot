@@ -12,7 +12,6 @@ import datetime
 import io
 import logging
 import os
-import requests
 
 from os.path import dirname, join as pjoin
 
@@ -43,8 +42,8 @@ class ExpiryEmail():
         ).format(**data).rstrip()
 
         self.to = key.primary_email
-        self.from_line = '"Paul M Furley" <paul@keyserver.paulfurley.com>'
-        self.reply_to = 'paul@paulfurley.com'
+        self.from_line = config.from_line
+        self.reply_to = config.reply_to
 
 
 def main():
@@ -106,7 +105,8 @@ def send_emails_for_keys(keys, emails_sent_csv, key_ids_already_emailed):
 def load_key_ids_already_emailed(emails_sent_csv):
     if not os.path.exists(emails_sent_csv):
         with io.open(emails_sent_csv, 'w') as f:
-            csv_writer = csv.DictWriter(f, config.csv_header, quoting=csv.QUOTE_ALL)
+            csv_writer = csv.DictWriter(
+                f, config.csv_header, quoting=csv.QUOTE_ALL)
             csv_writer.writeheader()
         return set([])
 
@@ -137,9 +137,9 @@ def send_with_mailgun(email, http=None):
         email.to, email.subject, email.body)
     )
 
-    domain = 'keyserver.paulfurley.com'
-
-    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(domain)
+    request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(
+        config.mailgun_domain
+    )
 
     try:
         response = http.post(

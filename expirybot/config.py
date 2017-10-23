@@ -1,28 +1,48 @@
 import io
 import json
 import logging
+import getpass
+import platform
 
 from os.path import abspath, dirname, join as pjoin
+
+import requests
 
 
 class Config():
     CONFIG_JSON = abspath(pjoin(dirname(__file__), '..', 'config.json'))
 
     def __init__(self):
-        self.keyserver = 'http://pool.sks-keyservers.net:11371'
-        self.mailgun_api_key = 'INVALID-API-KEY'
-        self.blacklisted_domains = []
 
         try:
             with io.open(self.CONFIG_JSON) as f:
-                config_json = json.load(f)
-
-                self.keyserver = config_json['keyserver']
-                self.mailgun_api_key = config_json['mailgun_api_key']
-                self.blacklisted_domains = config_json['blacklisted_domains']
+                config = json.load(f)
 
         except EnvironmentError:
             logging.warn('Failed to open {}'.format(self.CONFIG_JSON))
+            config = {}
+
+        self.mailgun_domain = config.get('mailgun_domain', 'example.com')
+
+        self.mailgun_api_key = config.get('mailgun_api_key', 'INVALID')
+
+        self.from_line = config.get('from_line', 'example@example.com')
+
+        self.reply_to = config.get('reply_to', '')
+
+        self.evaluation_email = config.get(
+            'evaluation_email', 'null@example.com'
+        )
+
+        self.blacklisted_domains = config.get('blacklisted_domains', [])
+
+        self.keyserver = config.get(
+            'keyserver', 'http://pool.sks-keyservers.net:11371'
+        )
+
+        self.user_agent = config.get(
+            'user_agent', self._default_user_agent()
+        )
 
     @property
     def data_dir(self):
@@ -38,6 +58,15 @@ class Config():
             'created_date',
             'expiry_date',
         ]
+
+    def _default_user_agent(self):
+        username = getpass.getuser()
+        hostname = platform.node()
+
+        return '{} {user}@{hostname}'.format(
+            requests.utils.default_user_agent(),
+            user=username,
+            hostname=hostname)
 
 
 config = Config()
