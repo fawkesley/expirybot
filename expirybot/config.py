@@ -26,6 +26,14 @@ class Config():
 
         self.mailgun_api_key = config.get('mailgun_api_key', 'INVALID')
 
+        self.from_line = config.get('from_line', 'example@example.com')
+
+        self.reply_to = config.get('reply_to', '')
+
+        self.evaluation_email = config.get(
+            'evaluation_email', 'null@example.com'
+        )
+
         self.blacklisted_domains = config.get('blacklisted_domains', [])
 
         self.keyserver = config.get(

@@ -43,8 +43,8 @@ class ExpiryEmail():
         ).format(**data).rstrip()
 
         self.to = key.primary_email
-        self.from_line = '"Paul M Furley" <paul@keyserver.paulfurley.com>'
-        self.reply_to = 'paul@paulfurley.com'
+        self.from_line = config.from_line
+        self.reply_to = config.reply_to
 
 
 def main():

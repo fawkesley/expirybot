@@ -112,8 +112,8 @@ def email_results(results, http=None):
             request_url,
             auth=('api', config.mailgun_api_key),
             data={
-                'from': '"Paul M Furley" <paul@keyserver.paulfurley.com>',
-                'to': 'paul@paulfurley.com',
+                'from': config.from_line,
+                'to': config.evaluation_email,
                 'subject': email_subject,
                 'text': email_body
                 }

@@ -67,6 +67,6 @@ class TestExpiryEmailClass(unittest.TestCase):
 
     def test_reply_to(self):
         assert_equal(
-            'paul@paulfurley.com',
+            '"Paul M Furley" <paul@paulfurley.com>',
             self.expiry_email.reply_to
         )
