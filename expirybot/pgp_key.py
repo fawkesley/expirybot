@@ -154,6 +154,14 @@ class PGPKey:
     def emails(self):
         return list(filter(None, map(self._parse_uid_as_email, self.uids)))
 
+    @property
+    def email_lines(self):
+
+        return list(filter(
+            None,
+            map(self._parse_uid_as_email_line, self.uids)
+        ))
+
     @staticmethod
     def _parse_uid_as_email(uid):
         match = re.match('.*<(?P<email>.+@.+)>$', uid)
