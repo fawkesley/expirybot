@@ -41,7 +41,7 @@ class ExpiryEmail():
             'email_subject.txt'
         ).format(**data).rstrip()
 
-        self.to = key.primary_email
+        self.to = ', '.join(key.email_lines[0:10])
         self.from_line = config.from_line
         self.reply_to = config.reply_to
 
