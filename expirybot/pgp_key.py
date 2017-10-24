@@ -10,6 +10,8 @@ class OpenPGPVersion3FingerprintUnsupported(ValueError):
 
 
 class PGPKey:
+    EMAIL_PATTERN = '(?P<email>.+@.+\..+)'
+
     def __init__(self, fingerprint=None, algorithm_number=None, size_bits=None,
                  uids=None, expiry_date=None, created_date=None, **kwargs):
         self._fingerprint = None
@@ -164,14 +166,15 @@ class PGPKey:
 
     @staticmethod
     def _parse_uid_as_email(uid):
-        match = re.match('.*<(?P<email>.+@.+)>$', uid)
+
+        match = re.match('.*<' + PGPKey.EMAIL_PATTERN + '>$', uid)
         if match:
             return match.group('email')
 
     @staticmethod
     def _parse_uid_as_email_line(uid):
         patterns = [
-            r'^(?P<name>.*?) *\(.*\) *<(?P<email>.+@.+\..+)>$',
+            r'^(?P<name>.*?) *\(.*\) *<' + PGPKey.EMAIL_PATTERN + '>$',
             r'^(?P<email>.+@.+\..+)$',  # paul@example.com
         ]
 
