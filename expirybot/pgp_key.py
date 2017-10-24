@@ -166,10 +166,15 @@ class PGPKey:
 
     @staticmethod
     def _parse_uid_as_email(uid):
+        patterns = [
+            '.*<' + PGPKey.EMAIL_PATTERN + '>$',
+            '^' + PGPKey.EMAIL_PATTERN + '$',
+        ]
+        for pattern in patterns:
+            match = re.match(pattern, uid)
 
-        match = re.match('.*<' + PGPKey.EMAIL_PATTERN + '>$', uid)
-        if match:
-            return match.group('email')
+            if match:
+                return match.group('email')
 
     @staticmethod
     def _parse_uid_as_email_line(uid):
