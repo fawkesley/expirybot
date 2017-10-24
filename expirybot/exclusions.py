@@ -1,6 +1,6 @@
 import logging
 
-from .config import BLACKLISTED_DOMAINS
+from .config import config
 
 LOG = logging.getLogger(__name__)
 
@@ -45,4 +45,4 @@ def is_blacklisted_domain(key):
         return False
 
     _, domain = key.primary_email.split('@', 1)
-    return domain.lower() in BLACKLISTED_DOMAINS
+    return domain.lower() in config.blacklisted_domains
