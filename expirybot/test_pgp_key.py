@@ -7,6 +7,7 @@ EMAIL_CASES = [
     ('Paul F (hello) <paul@example.com>', 'paul@example.com'),
     ('Paul F () <paul@example.com>', 'paul@example.com'),
     ('Paul F <paul@example.com>', 'paul@example.com'),
+    ('paul@example.com', 'paul@example.com'),
     ('Paul <paul@invalid>', None),
 ]
 
