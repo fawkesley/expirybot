@@ -1,11 +1,14 @@
 import csv
 import io
 import logging
+import sys
 import os
 
 from os.path import join as pjoin
 from contextlib import contextmanager
 from .config import config
+
+import rollbar
 
 from .pgp_key import PGPKey
 
@@ -26,6 +29,8 @@ def make_atomic_csv_writer(output_filename, header):
 
 
 def setup_logging(log_filename):
+    sys.excepthook = _handle_exception
+
     logging.basicConfig(level=logging.INFO,
                         filename=log_filename,
                         format='%(asctime)s %(levelname)s %(message)s')
@@ -61,3 +66,15 @@ def write_key_to_csv(key, csv_writer):
 
 def make_today_data_dir(today):
     return pjoin(config.data_dir, today.isoformat())
+
+
+def _handle_exception(exc_type, exc_value, traceback):
+    exc_info = (exc_type, exc_value, traceback)
+
+    if config.rollbar_api_key is not None:
+        rollbar.init(config.rollbar_api_key)
+        rollbar.report_exc_info(exc_info=exc_info, extra_data={})
+    else:
+        logging.warn('No rollbar API key, not sending exception.')
+
+    sys.__excepthook__(exc_type, exc_value, traceback)
