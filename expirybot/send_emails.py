@@ -159,7 +159,7 @@ def send_with_mailgun(email, http=None):
             )
     except Exception as e:
         logging.exception(e)
-        return False
+        raise
 
     try:
         response.raise_for_status()
@@ -167,7 +167,7 @@ def send_with_mailgun(email, http=None):
         logging.exception(e)
         logging.error('Status: {0}'.format(response.status_code))
         logging.error('Body:   {0}'.format(response.text))
-        return False
+        raise
 
     return True
 
