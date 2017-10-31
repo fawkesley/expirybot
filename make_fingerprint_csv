@@ -13,6 +13,7 @@ LATEST_SYMLINK="${THIS_DIR}/data/latest"
 
 make_todays_data_dir() {
   mkdir -p ${TODAYS_DATA_DIR}
+  rm -f ${LATEST_SYMLINK}
   ln -sf ${TODAYS_DATA_DIR} ${LATEST_SYMLINK}
 }
 
