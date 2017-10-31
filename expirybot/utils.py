@@ -72,7 +72,7 @@ def _handle_exception(exc_type, exc_value, traceback):
     exc_info = (exc_type, exc_value, traceback)
 
     if config.rollbar_api_key is not None:
-        rollbar.init(config.rollbar_api_key)
+        rollbar.init(config.rollbar_api_key, config.rollbar_environment)
         rollbar.report_exc_info(exc_info=exc_info, extra_data={})
     else:
         logging.warn('No rollbar API key, not sending exception.')

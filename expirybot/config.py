@@ -28,6 +28,8 @@ class Config():
 
         self.rollbar_api_key = config.get('rollbar_api_key', None)
 
+        self.rollbar_environment = config.get('rollbar_environment', 'dev')
+
         self.from_line = config.get('from_line', 'example@example.com')
 
         self.reply_to = config.get('reply_to', '')
