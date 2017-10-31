@@ -26,6 +26,13 @@ from .utils import (
 
 EMAILS_TO_SEND = 500
 
+# We're trying to limit to 100 emails per hour to keep under Mailgun's
+# restriction.
+# Mailgun counts an email with multiple To: recipients as multiple emails, so
+# we need to limit further than 100 per hour.
+EMAILS_PER_HOUR = 99
+ONE_HOUR = 60 * 60
+
 
 class ExpiryEmail():
     def __init__(self, key):
@@ -125,10 +132,7 @@ def send_email(key):
     return send_with_mailgun(email)
 
 
-ONE_HOUR = 60 * 60
-
-
-@ratelimit.rate_limited(99, ONE_HOUR)
+@ratelimit.rate_limited(EMAILS_PER_HOUR, ONE_HOUR)
 def send_with_mailgun(email, http=None):
 
     http = http or RequestsWithSessionAndUserAgent()
