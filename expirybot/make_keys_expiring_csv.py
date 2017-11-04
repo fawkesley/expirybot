@@ -18,7 +18,9 @@ from .utils import (
     make_today_data_dir, setup_logging
 )
 
-from .exclusions import is_strong_key, is_blacklisted_domain, has_missing_email
+from .exclusions import (
+    is_strong_key, all_blacklisted_domains, no_valid_emails
+)
 
 EXPIRING_DAYS = 3
 
@@ -79,13 +81,13 @@ def should_exclude(key):
             key.fingerprint))
         return True
 
-    elif is_blacklisted_domain(key):
-        logging.warn("Skipping blacklisted domain: {}".format(
-            key.primary_email))
+    elif all_blacklisted_domains(key):
+        logging.warn("Skipping key with all blacklisted domains: {}".format(
+            key.email_lines))
         return True
 
-    elif has_missing_email(key):
-        logging.warn("Skipping key without email: {}".format(
+    elif no_valid_emails(key):
+        logging.warn("Skipping key without any valid emails: {}".format(
             key.fingerprint))
         return True
 

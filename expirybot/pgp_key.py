@@ -2,6 +2,8 @@ import datetime
 import re
 
 import logging
+from .exclusions import roughly_validate_email
+
 LOG = logging.getLogger(__name__)
 
 
@@ -10,7 +12,6 @@ class OpenPGPVersion3FingerprintUnsupported(ValueError):
 
 
 class PGPKey:
-    EMAIL_PATTERN = '(?P<email>.+@.+\..+)'
 
     def __init__(self, fingerprint=None, algorithm_number=None, size_bits=None,
                  uids=None, expiry_date=None, created_date=None, **kwargs):
@@ -143,58 +144,18 @@ class PGPKey:
 
     @property
     def uids(self):
-        return self._uids
-
-    @property
-    def primary_email(self):
-        emails = self.emails
-
-        if len(emails):
-            return emails[0]
-
-    @property
-    def emails(self):
-        return list(filter(None, map(self._parse_uid_as_email, self.uids)))
+        return list(filter(
+            lambda uid: uid.is_valid,
+            map(UID, self._uids)
+        ))
 
     @property
     def email_lines(self):
+        return [uid.email_line for uid in self.uids]
 
-        return list(filter(
-            None,
-            map(self._parse_uid_as_email_line, self.uids)
-        ))
-
-    @staticmethod
-    def _parse_uid_as_email(uid):
-        patterns = [
-            '.*<' + PGPKey.EMAIL_PATTERN + '>$',
-            '^' + PGPKey.EMAIL_PATTERN + '$',
-        ]
-        for pattern in patterns:
-            match = re.match(pattern, uid)
-
-            if match:
-                return match.group('email')
-
-    @staticmethod
-    def _parse_uid_as_email_line(uid):
-        patterns = [
-            r'^(?P<name>.*?) *\(.*\) *<' + PGPKey.EMAIL_PATTERN + '>$',
-            r'^(?P<email>.+@.+\..+)$',  # paul@example.com
-        ]
-
-        for pattern in patterns:
-            match = re.match(pattern, uid)
-
-            if match is None:
-                continue
-
-            if match.groupdict().get('name', ''):
-                return '{} <{}>'.format(
-                    match.group('name'), match.group('email')
-                )
-            else:
-                return match.group('email')
+    @property
+    def emails(self):
+        return [uid.email for uid in self.uids]
 
     def expires_in(self, days):
         return self.days_until_expiry == days
@@ -224,6 +185,68 @@ class PGPKey:
             timestamp = int(timestamp)
 
         return datetime.datetime.fromtimestamp(timestamp).date()
+
+
+class UID():
+    EMAIL_PATTERN = '(?P<email>.+@.+\..+)'
+
+    def __init__(self, uid_string):
+        self._valid = False
+        self._name = None
+        self._command = None
+        self._email = None
+
+        self._parse(uid_string)
+
+    @property
+    def is_valid(self):
+        return self._valid
+
+    def _parse(self, uid):
+
+        patterns = [
+            r'^(?P<name>.*?) \((?P<comment>.*)\) <' + UID.EMAIL_PATTERN + '>$',
+            r'^(?P<name>.*?) <' + UID.EMAIL_PATTERN + '>$',
+            r'^' + UID.EMAIL_PATTERN + '$',
+        ]
+
+        for pattern in patterns:
+            match = re.match(pattern, uid)
+
+            if match is None:
+                logging.info("no match `{}` in `{}`".format(uid, pattern))
+                continue
+
+            if not roughly_validate_email(match.group('email')):
+                continue
+
+            logging.info(match.groupdict())
+
+            self._name = match.groupdict().get('name', None)
+            self._comment = match.groupdict().get('comment', None)
+            self._email = match.groupdict().get('email', None)
+            break
+
+        if self._email is not None:
+            self._valid = True
+
+    @property
+    def email_line(self):
+        if not self.is_valid:
+            return None
+
+        if self._name is not None:
+            return '{name} <{email}>'.format(
+                name=self._name, email=self._email)
+        else:
+            return '{email}'.format(email=self._email)
+
+    @property
+    def email(self):
+        if not self.is_valid:
+            raise RuntimeError('invalid')
+
+        return '{email}'.format(email=self._email)
 
 
 class Fingerprint():
