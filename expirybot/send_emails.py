@@ -16,6 +16,7 @@ import os
 from os.path import dirname, join as pjoin
 
 import ratelimit
+from requests import HTTPError
 
 from .config import config
 from .requests_wrapper import RequestsWithSessionAndUserAgent
@@ -163,11 +164,11 @@ def send_with_mailgun(email, http=None):
 
     try:
         response.raise_for_status()
-    except Exception as e:
+    except HTTPError as e:
         logging.exception(e)
         logging.error('Status: {0}'.format(response.status_code))
         logging.error('Body:   {0}'.format(response.text))
-        raise
+        raise HTTPError(*e.args + (' body: ' + response.text,))
 
     return True
 
