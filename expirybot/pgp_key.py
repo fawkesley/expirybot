@@ -144,18 +144,15 @@ class PGPKey:
 
     @property
     def uids(self):
-        return list(filter(
-            lambda uid: uid.is_valid,
-            map(UID, self._uids)
-        ))
+        return list(map(UID, self._uids))
 
     @property
     def email_lines(self):
-        return [uid.email_line for uid in self.uids]
+        return list(filter(None, (uid.email_line for uid in self.uids)))
 
     @property
     def emails(self):
-        return [uid.email for uid in self.uids]
+        return list(filter(None, (uid.email for uid in self.uids)))
 
     def expires_in(self, days):
         return self.days_until_expiry == days

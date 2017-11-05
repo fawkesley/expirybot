@@ -21,3 +21,8 @@ EMAIL_LINE_CASES = [
 def test_parse_email_line():
     for uid, expected in EMAIL_LINE_CASES:
         yield assert_equal, expected, UID(uid).email_line
+
+
+def test_uid_class():
+    uid = UID('hello')
+    assert_equal('hello', str(uid))
