@@ -193,7 +193,7 @@ class UID():
     def __init__(self, uid_string):
         self._valid = False
         self._name = None
-        self._command = None
+        self._comment = None
         self._email = None
 
         self._parse(uid_string)
