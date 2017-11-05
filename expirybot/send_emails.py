@@ -127,9 +127,13 @@ def load_template(name):
 
 
 def send_email(key):
-    logging.info("send_email: {}".format(key))
-
     email = ExpiryEmail(key)
+
+    logging.info("About to send email for {} to `{}`\nSubject: {}".format(
+        key, email.to, email.subject)
+    )
+    logging.debug(email.body)
+
     return send_with_mailgun(email)
 
 
@@ -137,10 +141,6 @@ def send_email(key):
 def send_with_mailgun(email, http=None):
 
     http = http or RequestsWithSessionAndUserAgent()
-
-    logging.debug("About to send email to {}:\nSubject: {}\n{}".format(
-        email.to, email.subject, email.body)
-    )
 
     request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(
         config.mailgun_domain
