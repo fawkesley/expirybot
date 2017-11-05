@@ -31,7 +31,7 @@ EMAILS_TO_SEND = 500
 # restriction.
 # Mailgun counts an email with multiple To: recipients as multiple emails, so
 # we need to limit further than 100 per hour.
-EMAILS_PER_HOUR = 85
+EMAILS_PER_HOUR = 70
 ONE_HOUR = 60 * 60
 
 
