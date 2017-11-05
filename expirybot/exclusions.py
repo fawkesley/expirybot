@@ -45,11 +45,7 @@ def all_blacklisted_domains(key):
     if no_valid_emails(key):
         return False
 
-    def get_domain(email):
-        _, domain = email.split('@', 1)
-        return domain
-
-    return all(is_blacklisted(get_domain(e)) for e in key.emails)
+    return all(is_blacklisted(uid.domain) for uid in key.uids)
 
 
 def is_blacklisted(domain):
