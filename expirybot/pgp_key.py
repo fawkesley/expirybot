@@ -191,6 +191,7 @@ class UID():
     EMAIL_PATTERN = '(?P<email>.+@.+\..+)'
 
     def __init__(self, uid_string):
+        self._raw_string = uid_string
         self._valid = False
         self._name = None
         self._comment = None
@@ -203,24 +204,7 @@ class UID():
         return self._valid
 
     def __str__(self):
-        if not self.is_valid:
-            return None
-
-        if self._name and self._comment and self._email:
-            return '{} ({}) <{}>'.format(
-                self._name, self._comment, self._email
-            )
-
-        elif self._name and self._email:
-            return '{} <{}>'.format(
-                self._name, self._email
-            )
-
-        elif self._email:
-            return '{}'.format(self._email)
-
-        else:
-            return None
+        return self._raw_string
 
     def _parse(self, uid):
 
@@ -249,26 +233,29 @@ class UID():
 
     @property
     def email_line(self):
-        if not self.is_valid:
-            return None
-
-        if self._name is not None:
+        if self._name is not None and self._email is not None:
             return '{name} <{email}>'.format(
                 name=self._name, email=self._email)
-        else:
+        elif self._email is not None:
             return '{email}'.format(email=self._email)
+
+        else:
+            return None
 
     @property
     def email(self):
-        if not self.is_valid:
-            raise RuntimeError('invalid')
-
-        return '{email}'.format(email=self._email)
+        if self._email is not None:
+            return self._email
+        else:
+            return None
 
     @property
     def domain(self):
-        _, domain = self._email.split('@', 1)
-        return domain
+        if self._email is not None:
+            _, domain = self._email.split('@', 1)
+            return domain
+        else:
+            return None
 
 
 class Fingerprint():
