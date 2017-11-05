@@ -234,13 +234,10 @@ class UID():
             match = re.match(pattern, uid)
 
             if match is None:
-                logging.info("no match `{}` in `{}`".format(uid, pattern))
                 continue
 
             if not roughly_validate_email(match.group('email')):
                 continue
-
-            logging.info(match.groupdict())
 
             self._name = match.groupdict().get('name', None)
             self._comment = match.groupdict().get('comment', None)
