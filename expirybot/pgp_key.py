@@ -202,6 +202,26 @@ class UID():
     def is_valid(self):
         return self._valid
 
+    def __str__(self):
+        if not self.is_valid:
+            return None
+
+        if self._name and self._comment and self._email:
+            return '{} ({}) <{}>'.format(
+                self._name, self._comment, self._email
+            )
+
+        elif self._name and self._email:
+            return '{} <{}>'.format(
+                self._name, self._email
+            )
+
+        elif self._email:
+            return '{}'.format(self._email)
+
+        else:
+            return None
+
     def _parse(self, uid):
 
         patterns = [
