@@ -19,6 +19,7 @@ import ratelimit
 from requests import HTTPError
 
 from .config import config
+from .exclusions import is_blacklisted
 from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv, setup_logging
@@ -49,9 +50,23 @@ class ExpiryEmail():
             'email_subject.txt'
         ).format(**data).rstrip()
 
-        self.to = ', '.join(key.email_lines[0:10])
+        self.to = ', '.join(self._unblacklisted_email_lines(key)[0:10])
         self.from_line = config.from_line
         self.reply_to = config.reply_to
+
+    @staticmethod
+    def _unblacklisted_email_lines(key):
+        unblacklisted_uids = filter(
+            lambda uid: not is_blacklisted(uid.domain),
+            key.uids
+        )
+
+        return list(
+            map(
+                lambda uid: uid.email_line,
+                unblacklisted_uids
+            )
+        )
 
 
 def main():

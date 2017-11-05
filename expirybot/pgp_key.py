@@ -248,6 +248,11 @@ class UID():
 
         return '{email}'.format(email=self._email)
 
+    @property
+    def domain(self):
+        _, domain = self._email.split('@', 1)
+        return domain
+
 
 class Fingerprint():
     def __init__(self, fingerprint_string):
