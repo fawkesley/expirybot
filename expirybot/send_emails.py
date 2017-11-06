@@ -56,9 +56,13 @@ class ExpiryEmail():
 
     @staticmethod
     def _unblacklisted_email_lines(key):
+        uids_with_emails = filter(
+            lambda uid: uid.email is not None,
+            key.uids
+        )
         unblacklisted_uids = filter(
             lambda uid: not is_blacklisted(uid.domain),
-            key.uids
+            uids_with_emails
         )
 
         return list(
