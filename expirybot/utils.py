@@ -54,7 +54,7 @@ def write_key_to_csv(key, csv_writer):
         'fingerprint': key.fingerprint,
         'algorithm_number': key.algorithm_number,
         'size_bits': key.size_bits,
-        'uids': '|'.join(key.uids),
+        'uids': '|'.join(map(str, key.uids)),
         'created_date': (
             key.created_date.isoformat() if key.created_date else ''
         ),

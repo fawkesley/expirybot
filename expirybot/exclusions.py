@@ -1,4 +1,5 @@
 import logging
+import re
 
 from .config import config
 
@@ -35,14 +36,52 @@ def is_strong_key(key):
         return False
 
 
-def has_missing_email(key):
-    missing_email = key.primary_email is None
+def no_valid_emails(key):
+    missing_email = not key.email_lines
     return missing_email
 
 
-def is_blacklisted_domain(key):
-    if key.primary_email is None:
+def all_blacklisted_domains(key):
+    if no_valid_emails(key):
         return False
 
-    _, domain = key.primary_email.split('@', 1)
+    uids_with_domains = filter(lambda u: u.domain is not None, key.uids)
+
+    return all(is_blacklisted(uid.domain) for uid in uids_with_domains)
+
+
+def is_blacklisted(domain):
+    if not isinstance(domain, str):
+        raise TypeError(
+            'Invalid domain `{}` type: {}'. format(domain, type(domain))
+        )
     return domain.lower() in config.blacklisted_domains
+
+
+def roughly_validate_email(email):
+    try:
+        (_, hostname) = email.split('@', 1)
+    except ValueError:
+        return False
+
+    return roughly_validate_hostname(hostname)
+
+
+def roughly_validate_hostname(hostname):
+    if len(hostname) > 255:
+        return False
+
+    if hostname[-1] == ".":
+        hostname = hostname[:-1]  # strip exactly 0 or 1 dot from the right
+
+    allowed = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+
+    parts = hostname.split(".")
+
+    if not parts:
+        return False
+
+    if parts[-1] == 'onion':
+        return False
+
+    return all(allowed.match(x) for x in parts)

@@ -19,6 +19,7 @@ import ratelimit
 from requests import HTTPError
 
 from .config import config
+from .exclusions import is_blacklisted
 from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv, setup_logging
@@ -49,9 +50,27 @@ class ExpiryEmail():
             'email_subject.txt'
         ).format(**data).rstrip()
 
-        self.to = ', '.join(key.email_lines[0:10])
+        self.to = ', '.join(self._unblacklisted_email_lines(key)[0:10])
         self.from_line = config.from_line
         self.reply_to = config.reply_to
+
+    @staticmethod
+    def _unblacklisted_email_lines(key):
+        uids_with_emails = filter(
+            lambda uid: uid.email is not None,
+            key.uids
+        )
+        unblacklisted_uids = filter(
+            lambda uid: not is_blacklisted(uid.domain),
+            uids_with_emails
+        )
+
+        return list(
+            map(
+                lambda uid: uid.email_line,
+                unblacklisted_uids
+            )
+        )
 
 
 def main():
@@ -100,14 +119,12 @@ def send_emails_for_keys(keys, emails_sent_csv, key_ids_already_emailed):
             logging.info("Already emailed key: {}".format(key))
 
         elif send_email(key):
-            logging.info("Emailed {} - {}".format(key.primary_email, key))
+            logging.info("Emailed {}".format(key))
             write_key_to_csv(key, emails_sent_csv)
             key_ids_already_emailed.add(key.long_id)
 
         else:
-            logging.warn("Failed emailing {} - {}".format(
-                key.primary_email, key)
-            )
+            logging.warn("Failed emailing {}".format(key))
 
 
 def load_key_ids_already_emailed(emails_sent_csv):

@@ -62,7 +62,7 @@ class TestKeyserverVindexParser(unittest.TestCase):
         keys = self._parse_sample_file('vindex_unicode')
 
         assert_equal('Tobias Yüksel <Tobias.yueksel@googlemail.com>',
-                     keys[0].uids[0])
+                     keys[0].uids[0].email_line)
 
     def test_parse_created_date(self):
         keys = self._parse_sample_file('vindex_paulfurley')
