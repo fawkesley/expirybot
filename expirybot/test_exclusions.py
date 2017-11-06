@@ -13,6 +13,8 @@ def test_all_blacklisted_domains():
         ('paul@example.com', False),
         ('paul@blacklisted.com|paul2@blacklisted.com', True),
         ('paul@blacklisted.com|paul@example.com', False),
+
+        ('paul@example.com|invalid', False),
     ]:
         key = PGPKey(uids=uids)
         yield assert_equal, expected, all_blacklisted_domains(key)

@@ -45,10 +45,16 @@ def all_blacklisted_domains(key):
     if no_valid_emails(key):
         return False
 
-    return all(is_blacklisted(uid.domain) for uid in key.uids)
+    uids_with_domains = filter(lambda u: u.domain is not None, key.uids)
+
+    return all(is_blacklisted(uid.domain) for uid in uids_with_domains)
 
 
 def is_blacklisted(domain):
+    if not isinstance(domain, str):
+        raise TypeError(
+            'Invalid domain `{}` type: {}'. format(domain, type(domain))
+        )
     return domain.lower() in config.blacklisted_domains
 
 
