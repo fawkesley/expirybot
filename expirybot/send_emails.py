@@ -19,7 +19,6 @@ import ratelimit
 from requests import HTTPError
 
 from .config import config
-from .exclusions import is_blacklisted
 from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv, setup_logging
@@ -37,12 +36,27 @@ ONE_HOUR = 60 * 60
 
 
 class ExpiryEmail():
+    """
+    Render an expiry email for the given PGP key.
+    """
+
     def __init__(self, key):
+        self.key = key
+        self.ok_to_send = False
+
+        if not self._get_uid():
+            return
+
+        if not self._get_unsubscribe_link():
+            return
+
         data = {
             'fingerprint': key.fingerprint,
             'key_id': key.long_id,
             'friendly_expiry_date': key.friendly_expiry_date,
-            'days_until_expiry': key.days_until_expiry
+            'days_until_expiry': key.days_until_expiry,
+            'email_address': self.__uid.email,
+            'unsubscribe_link': self.unsubscribe_link
         }
 
         self.body = load_template('email_body.txt').format(**data)
@@ -50,27 +64,43 @@ class ExpiryEmail():
             'email_subject.txt'
         ).format(**data).rstrip()
 
-        self.to = ', '.join(self._unblacklisted_email_lines(key)[0:10])
+        self.to = self.__uid.email_line
         self.from_line = config.from_line
         self.reply_to = config.reply_to
 
-    @staticmethod
-    def _unblacklisted_email_lines(key):
-        uids_with_emails = filter(
-            lambda uid: uid.email is not None,
-            key.uids
-        )
-        unblacklisted_uids = filter(
-            lambda uid: not is_blacklisted(uid.domain),
-            uids_with_emails
-        )
+        self.ok_to_send = True
 
-        return list(
-            map(
-                lambda uid: uid.email_line,
-                unblacklisted_uids
-            )
-        )
+    def _get_uid(self):
+        self.__uid = self.key.most_likely_uid()
+        return self.__uid is not None
+
+    def _get_unsubscribe_link(self):
+        self.unsubscribe_link = make_unsubscribe_link(self.__uid.email)
+        return self.unsubscribe_link is not None
+
+
+def make_unsubscribe_link(email, http=None):
+    http = http or RequestsWithSessionAndUserAgent()
+
+    response = http.get(
+        'https://www.expirybot.com/apiv1/blacklist/unsubscribe-link/',
+        params={
+            'email_address': email
+        },
+        headers={
+            'Authorization': 'Token {}'.format(config.expirybot_api_token),
+        }
+    )
+
+    response.raise_for_status()
+    data = response.json()
+
+    logging.info(data)
+
+    if data['allow_email']:
+        return data.get('unsubscribe_link', None)
+    else:
+        return None
 
 
 def main():
@@ -145,6 +175,8 @@ def load_template(name):
 
 def send_email(key):
     email = ExpiryEmail(key)
+    if not email.ok_to_send:
+        return False
 
     logging.info("About to send email for {} to `{}`\nSubject: {}".format(
         key, email.to, email.subject)

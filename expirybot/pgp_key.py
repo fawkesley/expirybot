@@ -2,7 +2,7 @@ import datetime
 import re
 
 import logging
-from .exclusions import roughly_validate_email
+from .exclusions import roughly_validate_email, is_blacklisted
 
 LOG = logging.getLogger(__name__)
 
@@ -153,6 +153,23 @@ class PGPKey:
     @property
     def emails(self):
         return list(filter(None, (uid.email for uid in self.uids)))
+
+    def most_likely_uid(self):
+        uids_with_emails = filter(
+            lambda uid: uid.email is not None,
+            self.uids
+        )
+        unblacklisted_uids = filter(
+            lambda uid: not is_blacklisted(uid.domain),
+            uids_with_emails
+        )
+
+        uids = list(unblacklisted_uids)
+
+        if len(uids):
+            return uids[-1]  # most recent, perhaps...
+        else:
+            return None
 
     def expires_in(self, days):
         return self.days_until_expiry == days
