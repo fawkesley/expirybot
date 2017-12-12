@@ -7,6 +7,19 @@ REQUIREMENTS_HASH=$(sha1sum ${THIS_DIR}/requirements.txt | cut '-d ' -f1)
 
 VENV_DIR="${THIS_DIR}/venv/${REQUIREMENTS_HASH}"
 
+TODAYS_DATE="$(date +%F)"
+
+make_todays_data_dir() {
+
+  cd "${THIS_DIR}/data"
+
+  mkdir -p ${TODAYS_DATE}
+  rm -f latest
+  ln -sf ${TODAYS_DATE} latest
+
+  cd -
+}
+
 setup_virtualenv() {
   virtualenv -p $(which python3) "${VENV_DIR}"
   
@@ -17,4 +30,5 @@ setup_virtualenv() {
   pip install -r "${THIS_DIR}/requirements.txt"
 }
 
+make_todays_data_dir
 setup_virtualenv
