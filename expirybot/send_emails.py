@@ -78,6 +78,13 @@ class ExpiryEmail():
         self.unsubscribe_link = make_unsubscribe_link(self.__uid.email)
         return self.unsubscribe_link is not None
 
+    @property
+    def list_unsubscribe_header(self):
+        if self.unsubscribe_link is not None:
+            return '<{}>'.format(self.unsubscribe_link)
+        else:
+            return ''
+
 
 def make_unsubscribe_link(email, http=None):
     http = http or RequestsWithSessionAndUserAgent()
@@ -203,6 +210,7 @@ def send_with_mailgun(email, http=None):
                 'from': email.from_line,
                 'to': email.to,
                 'h:Reply-To': email.reply_to,
+                'h:List-Unsubscribe': email.list_unsubscribe_header,
                 'subject': email.subject,
                 'text': email.body
                 }
