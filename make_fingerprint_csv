@@ -5,18 +5,6 @@ THIS_DIR=$(dirname ${THIS_SCRIPT})
 
 SHARED_SHORT_IDS_FILE=/usr/share/sks/short_key_ids_dump.txt
 
-TODAYS_DATA_DIR="${THIS_DIR}/data/$(date +%F)/"
-LATEST_SYMLINK="${THIS_DIR}/data/latest"
-
-. ${THIS_DIR}/_setup_virtualenv
-
-
-make_todays_data_dir() {
-  mkdir -p ${TODAYS_DATA_DIR}
-  rm -f ${LATEST_SYMLINK}
-  ln -sf ${TODAYS_DATA_DIR} ${LATEST_SYMLINK}
-}
-
 make_expiring_keys_csv() {
   cd "${THIS_DIR}"
   firejail python3 -m expirybot.make_fingerprint_csv "${SHARED_SHORT_IDS_FILE}"
