@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+
+THIS_SCRIPT=$0
+THIS_DIR=$(dirname ${THIS_SCRIPT})
+
+GPG=/usr/bin/gpg2
+
+export GNUPGHOME="$(readlink -f ${THIS_DIR}/gnupghome)"
+
+$GPG \
+  --batch \
+  --no-tty \
+  --no-version \
+  --no-comment \
+  --clearsign
