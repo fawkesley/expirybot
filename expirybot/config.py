@@ -30,6 +30,8 @@ class Config():
 
         self.rollbar_environment = config.get('rollbar_environment', 'dev')
 
+        self.expirybot_api_token = config.get('expirybot_api_token', 'INVALID')
+
         self.from_line = config.get('from_line', 'example@example.com')
 
         self.reply_to = config.get('reply_to', '')

@@ -41,3 +41,7 @@ Let's make it better! Trying to improve the world by making :)
 - Website: https://www.paulfurley.com/expirybot-emails-pgp-users-before-their-key-expires/
 - Twitter: https://twitter.com/paul_furley
 - PGP: A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
+
+Stop *all* Expirybot emails to {email_address}:
+
+{unsubscribe_link}
