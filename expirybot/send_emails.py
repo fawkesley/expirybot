@@ -23,6 +23,7 @@ from .requests_wrapper import RequestsWithSessionAndUserAgent
 from .utils import (
     make_today_data_dir, load_keys_from_csv, write_key_to_csv, setup_logging
 )
+from .gpg import sign_text
 
 
 EMAILS_TO_SEND = 500
@@ -59,7 +60,7 @@ class ExpiryEmail():
             'unsubscribe_link': self.unsubscribe_link
         }
 
-        self.body = load_template('email_body.txt').format(**data)
+        self.__unsigned_body = load_template('email_body.txt').format(**data)
         self.subject = load_template(
             'email_subject.txt'
         ).format(**data).rstrip()
@@ -84,6 +85,10 @@ class ExpiryEmail():
             return '<{}>'.format(self.unsubscribe_link)
         else:
             return ''
+
+    @property
+    def body(self):
+        return sign_text(self.__unsigned_body)
 
 
 def make_unsubscribe_link(email, http=None):
