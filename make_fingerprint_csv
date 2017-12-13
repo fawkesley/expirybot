@@ -3,6 +3,8 @@
 THIS_SCRIPT=$0
 THIS_DIR=$(dirname ${THIS_SCRIPT})
 
+. ${THIS_DIR}/_setup_environment
+
 SHARED_SHORT_IDS_FILE=/usr/share/sks/short_key_ids_dump.txt
 
 make_expiring_keys_csv() {
@@ -11,5 +13,4 @@ make_expiring_keys_csv() {
   cd -
 }
 
-make_todays_data_dir
 make_expiring_keys_csv
