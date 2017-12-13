@@ -9,7 +9,8 @@ Here's the key listed in the MIT public keyserver:
 
 https://pgp.mit.edu/pks/lookup?op=vindex&search={key_id}
 
-== Extend your key expiry date ==
+
+## Extend your key expiry date
 
 You can extend your key's expiry date and push it to the keyservers.
 
@@ -17,13 +18,12 @@ You don't need to create a new key.
 
 I've written a few short guides with screenshots for different software:
 
-- Enigmail with Thunderbird: https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
-- GPG Suite (GPG Keychain): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
-- GNU Privacy Guard (GnuPG): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
+* GPG Suite (GPG Keychain): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
+* Thunderbird and Enigmail: https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
+* GNU Privacy Guard (GnuPG): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
 
-(I'm currently working on Mailvelope - any others?)
 
-== Remember to push your updated key to the keyservers ==
+## Remember to push your updated key to the keyservers
 
 Once you've extended the expiry date, don't forget to push your key to the keyservers again so everyone can see the update.
 
@@ -33,14 +33,14 @@ Kind regards,
 
 Paul
 
---
-Paul M Furley => Engineer / Developer
+===
+Paul M Furley |Engineer / Developer
 
-Let's make it better! Trying to improve the world by making :)
+Trying to improve the world by making :)
 
-- Website: https://www.paulfurley.com/expirybot-emails-pgp-users-before-their-key-expires/
-- Twitter: https://twitter.com/paul_furley
-- PGP: A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
+* Website: https://www.paulfurley.com/expirybot-emails-pgp-users-before-their-key-expires/
+* Twitter: https://twitter.com/paul_furley
+* PGP: A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
 
 Stop *all* Expirybot emails to {email_address}:
 
