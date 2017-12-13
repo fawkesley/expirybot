@@ -1,0 +1,97 @@
+#!/bin/sh -e
+
+# https://www.gnupg.org/documentation/manuals/gnupg/Unattended-GPG-key-generation.html
+
+# Use gpg 1.x since gpg-2 is unable to export secret keys without a passphrase
+#
+# - https://lists.gt.net/gnupg/users/73992
+
+GPG=/usr/bin/gpg
+TMP_DIR=$(mktemp -d --suffix=.gpg)
+GNUPGHOME=${TMP_DIR}
+
+NAME="Paul's Expirybot"
+COMMENT="www.paulfurley.com/expirybot"
+EMAIL="paul@keyserver.paulfurley.com"
+
+PASSWORD="$(openssl rand -base64 30)"
+
+cat >batch <<EOF
+  %echo Generating a basic OpenPGP key
+  Key-Type: RSA
+  Key-Length: 4096
+  Key-Usage: sign
+  Subkey-Type: RSA
+  Subkey-Length: 2048
+  Subkey-Usage: sign
+  Name-Real: ${NAME}
+  Name-Comment: ${COMMENT}
+  Name-Email: ${EMAIL}
+  Expire-Date: 12m
+  Preferences: SHA256 SHA512 AES AES256 ZLIB BZIP2 ZIP Uncompressed
+  Passphrase: ${PASSWORD}
+  # Do a commit here, so that we can later print "done" :-)
+  %commit
+  %echo done
+EOF
+
+#  Revoker: rsa:A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
+
+$GPG --armor --batch --no-tty --gen-key batch
+rm batch
+
+DATE_STRING=$(date --iso-8601=seconds)
+
+OUTPUT_DIR=$(mktemp -d)
+
+echo
+echo "Outputting to ${OUTPUT_DIR}"
+echo
+set -x
+
+$GPG \
+  --armor \
+  --export \
+  --no-version \
+  --comment "Generated ${DATE_STRING} for ${NAME} <${EMAIL}>" \
+  > ${OUTPUT_DIR}/key.public.asc
+
+$GPG \
+  --armor \
+  --export-secret-keys \
+  --no-version \
+  --comment "PRIVATE KEY: Generated ${DATE_STRING} for ${NAME} <${EMAIL}>" \
+  > ${OUTPUT_DIR}/key.secret.asc
+
+
+# Export the subkey with *no password*
+
+echo -n "${PASSWORD}" | $GPG \
+  --passphrase-fd 0 \
+  --armor \
+  --no-version \
+  --comment 'This subkey has NO PASSWORD. Import with public key for unattended `gpg --clearsign`' \
+  --export-options export-reset-subkey-passwd \
+  --export-secret-subkeys \
+  > ${OUTPUT_DIR}/key.secret-subkey.asc
+
+rm -rf "${TMP_DIR}"
+
+# $GPG \
+#   --armor \
+#   --gen-revoke "${EMAIL}" \
+#   > ${OUTPUT_DIR}/key.revoke.asc
+
+ls -al ${OUTPUT_DIR}
+set +x
+
+echo
+echo "Now try:"
+echo
+echo '> export GNUPGHOME=$(mktemp -d)'
+echo "> $GPG --import ${OUTPUT_DIR}/key.public.asc"
+echo "> $GPG --import ${OUTPUT_DIR}/key.secret-subkey.asc"
+echo "> echo 'hello' | $GPG --clearsign"
+
+echo
+echo "RECORD THIS PASSWORD: $PASSWORD"
