@@ -53,6 +53,7 @@ class ExpiryEmail():
 
         data = {
             'fingerprint': key.fingerprint,
+            'zero_x_fingerprint': key.zero_x_fingerprint,
             'key_id': key.long_id,
             'friendly_expiry_date': key.friendly_expiry_date,
             'days_until_expiry': key.days_until_expiry,

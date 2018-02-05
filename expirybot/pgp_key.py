@@ -88,6 +88,10 @@ class PGPKey:
         return self._fingerprint
 
     @property
+    def zero_x_fingerprint(self):
+        return '0x{}'.format(self._fingerprint.replace(' ', ''))
+
+    @property
     def long_id(self):
         return self._fingerprint.to_long_id()
 
