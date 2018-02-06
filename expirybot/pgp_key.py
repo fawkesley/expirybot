@@ -89,7 +89,7 @@ class PGPKey:
 
     @property
     def zero_x_fingerprint(self):
-        return '0x{}'.format(self._fingerprint.replace(' ', ''))
+        return self._fingerprint.to_zero_x()
 
     @property
     def long_id(self):
@@ -302,6 +302,9 @@ class Fingerprint():
 
     def to_long_id(self):
         return '0x{}'.format(self._hex_digits.upper().replace(' ', '')[-16:])
+
+    def to_zero_x(self):
+        return '0x{}'.format(self._hex_digits.upper().replace(' ', ''))
 
     def __str__(self):
         return '{} {} {} {} {}  {} {} {} {} {}'.format(
