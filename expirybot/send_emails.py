@@ -231,9 +231,18 @@ def send_with_mailgun(email, http=None):
         logging.exception(e)
         logging.error('Status: {0}'.format(response.status_code))
         logging.error('Body:   {0}'.format(response.text))
-        raise HTTPError(*e.args + (' body: ' + response.text,))
+
+        if is_invalid_address_message(response):
+            return False
+        else:
+            raise HTTPError(*e.args + (' body: ' + response.text,))
 
     return True
+
+
+def is_invalid_address_message(response):
+    return response.status_code == 400 \
+        and 'is not a valid address' in response.json()['message']
 
 
 if __name__ == '__main__':
