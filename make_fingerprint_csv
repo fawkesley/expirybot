@@ -7,10 +7,5 @@ THIS_DIR=$(dirname ${THIS_SCRIPT})
 
 SHARED_SHORT_IDS_FILE=/usr/share/sks/short_key_ids_dump.txt
 
-make_expiring_keys_csv() {
-  cd "${THIS_DIR}"
-  firejail python3 -m expirybot.make_fingerprint_csv "${SHARED_SHORT_IDS_FILE}"
-  cd -
-}
-
-make_expiring_keys_csv
+cd "${THIS_DIR}"
+exec firejail python3 -m expirybot.make_fingerprint_csv "${SHARED_SHORT_IDS_FILE}"
