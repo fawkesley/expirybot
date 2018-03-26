@@ -27,6 +27,15 @@ I've written a few short guides with screenshots for different software:
 
 Once you've extended the expiry date, don't forget to push your key to the keyservers again so everyone can see the update.
 
+
+## Monitor the keyservers for your email address
+
+If you'd like to know when new keys are added to the keyservers with your email address, you can do that here:
+
+https://www.expirybot.com/monitor-email-address/?email={email_address}
+
+
+
 I hope this email has been helpful. If this feels like spam, I'm sorry :(
 
 Kind regards,
