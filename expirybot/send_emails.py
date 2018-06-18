@@ -6,12 +6,14 @@
 - send emails to N people we haven't already emailed
 """
 
+import backoff
 import contextlib
 import csv
 import datetime
 import io
 import logging
 import os
+import requests
 
 from os.path import dirname, join as pjoin
 
@@ -92,6 +94,9 @@ class ExpiryEmail():
         return sign_text(self.__unsigned_body)
 
 
+@backoff.on_exception(backoff.expo,
+                      requests.exceptions.RequestException,
+                      max_time=60)
 def make_unsubscribe_link(email, http=None):
     http = http or RequestsWithSessionAndUserAgent()
 

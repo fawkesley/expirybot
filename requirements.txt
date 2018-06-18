@@ -2,3 +2,4 @@ requests==2.18.4
 ratelimit==1.4.1
 freezegun==0.3.9
 rollbar==0.13.17
+backoff
