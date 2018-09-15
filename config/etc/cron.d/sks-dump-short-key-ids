@@ -1,2 +1,2 @@
 
-0 0 * * * root run-one /root/sks-dump-short-key-ids
+0 0 * * * root timeout 12h /root/sks-dump-short-key-ids
