@@ -19,7 +19,7 @@ MAILTO="paul@paulfurley.com"
 
 # Automatically install the crontab regularly file. Don't edit the crontab
 # directly, as that isn't source controlled.
-@hourly crontab < ~/crontab.txt
+@hourly crontab < ~/app/config/crontab.txt
 
 30 0 * * * timeout 12h ~/app/make_fingerprint_csv && timeout 1h ~/app/make_keys_expiring_csv
 0 9,10,11,12,13,14 * * * timeout 6h run-one ~/app/send_emails
