@@ -22,5 +22,5 @@ MAILTO="paul@paulfurley.com"
 @hourly crontab < ~/app/config/crontab.txt
 
 30 0 * * * timeout 12h ~/app/make_fingerprint_csv && timeout 1h ~/app/make_keys_expiring_csv
-0 9,10,11,12,13,14 * * * timeout 6h run-one ~/app/send_emails
+0 9,10,11,12,13,14 * * * timeout 6h ~/app/run-one ~/app/send_emails
 0 12 * * * timeout 20m ~/app/evaluate_last_week
