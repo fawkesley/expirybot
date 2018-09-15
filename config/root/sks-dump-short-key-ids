@@ -1,0 +1,42 @@
+#!/bin/sh -eu
+
+# daily cron to dump (short) key ids to a txt file
+
+SHORT_KEY_IDS_FILE=/usr/share/sks/short_key_ids_dump.txt
+TEMP_FILE=/usr/share/sks/.short_key_ids_dump.txt
+
+PATH=${PATH}:/bin:/usr/bin:/usr/sbin
+
+prepare_directory() {
+  mkdir -p $(dirname $SHORT_KEY_IDS_FILE)
+  rm -f "${TEMP_FILE}"
+
+  if [ -f "${SHORT_KEY_IDS_FILE}" ]; then
+    cp "${SHORT_KEY_IDS_FILE}" "${SHORT_KEY_IDS_FILE}".BAK
+  fi
+}
+
+dump_to_temp_file() {
+  service sks stop
+
+  set +e
+  db_dump /var/lib/sks/DB/keyid | grep '^ [a-f0-9]\{8\}$' |sed 's/^[[:space:]]*/0x/g' | sort -u > "${TEMP_FILE}"
+  EXITCODE=$?
+  set -e
+
+  service sks start
+}
+
+modify_permissions_if_successful() {
+  if [ "$EXITCODE" -eq "0" ]; then
+    mv "${TEMP_FILE}" "${SHORT_KEY_IDS_FILE}"
+    chmod 744 ${SHORT_KEY_IDS_FILE}
+  fi
+}
+
+
+prepare_directory
+dump_to_temp_file
+modify_permissions_if_successful
+
+exit $EXITCODE
