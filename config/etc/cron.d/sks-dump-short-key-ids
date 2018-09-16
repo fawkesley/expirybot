@@ -1,2 +1,2 @@
+0 0 * * * root timeout 1h /root/sks-dump-short-key-ids && /root/sks-dump-short-key-ids-ping-healthcheck
 
-0 0 * * * root timeout 12h /root/sks-dump-short-key-ids
