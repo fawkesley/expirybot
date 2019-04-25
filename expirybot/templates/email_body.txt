@@ -47,7 +47,7 @@ If a contact says your key has expired, it's probably because they haven't got y
 
 We hope this email has been helpful. If this feels like spam, we're sorry :(
 
-If you want, you can stop *all* Expirybot emails to {email_address}:
+You can stop *all* Expirybot emails to {email_address}:
 {unsubscribe_link}
 
 ---
