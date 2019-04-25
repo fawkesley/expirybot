@@ -18,16 +18,16 @@ You don't need to create a new key.
 
 We've written a few short guides with screenshots for different software:
 
-* Automatically extend your key made in GnuPG with Fluidkeys:
+* Automatically using Fluidkeys (command-line, works with GnuPG):
   https://www.fluidkeys.com/docs/extend-your-key-from-gpg/
 
-* Manually extend your key using GPG Suite (GPG Keychain):
+* Manually using GPG Suite / GPG Keychain (macOS):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
 
-* Extend it using Thunderbird and Enigmail:
+* Manually using Enigmail (Thunderbird plugin):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
 
-* Extend if using GNU Privacy Guard (GnuPG) command line:
+* Manually using GnuPG (command-line):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
 
 
