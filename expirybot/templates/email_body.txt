@@ -20,10 +20,13 @@ We've written a few short guides with screenshots for different software:
 
 * Automatically extend your key made in GnuPG with Fluidkeys:
   https://www.fluidkeys.com/docs/extend-your-key-from-gpg/
+
 * Manually extend your key using GPG Suite (GPG Keychain):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
+
 * Extend it using Thunderbird and Enigmail:
   https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
+
 * Extend if using GNU Privacy Guard (GnuPG) command line:
   https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
 
@@ -32,11 +35,13 @@ We've written a few short guides with screenshots for different software:
 
 Once you've extended the key's expiry, remember to upload it to the keyservers so your contacts can download it.
 
+
 ## 3. Remind your contacts to download your updated key ##
 
 Your contacts will need to download your updated key from the keyservers. Some software does this automatically.
 
 If a contact says your key has expired, it's probably because they haven't got your updated key.
+
 
 ## 4. Opt out if you never want to hear from us again! ##
 
