@@ -1,4 +1,4 @@
-Hi! I'm Paul and this email was sent by a friendly robot called Expirybot.
+Hi! This email was sent by a friendly robot called Expirybot.
 
 This is a reminder that your PGP key expires on {friendly_expiry_date}.
 
@@ -10,40 +10,58 @@ Here's how the key looks in my keyserver, which is part of the public pool:
 https://www.expirybot.com/key/{zero_x_fingerprint}/
 
 
-## Extend your key expiry date
+## 1. Extend your key expiry date ##
 
-You can extend your key's expiry date and push it to the keyservers.
+If you're still using the key, you can extend the key's expiry date.
 
 You don't need to create a new key.
 
-I've written a few short guides with screenshots for different software:
+We've written a few short guides with screenshots for different software:
 
-* GPG Suite (GPG Keychain): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
-* Thunderbird and Enigmail: https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
-* GNU Privacy Guard (GnuPG): https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
+* Automatically extend your key made in GnuPG with Fluidkeys:
+  https://www.fluidkeys.com/docs/extend-your-key-from-gpg/
+
+* Manually extend your key using GPG Suite (GPG Keychain):
+  https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
+
+* Extend it using Thunderbird and Enigmail:
+  https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
+
+* Extend if using GNU Privacy Guard (GnuPG) command line:
+  https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
 
 
-## Remember to push your updated key to the keyservers
+## 2. Upload your public key to the keyservers ##
 
-Once you've extended the expiry date, don't forget to push your key to the keyservers again so everyone can see the update.
+Once you've extended the key's expiry, remember to upload it to the keyservers so your contacts can download it.
 
 
-I hope this email has been helpful. If this feels like spam, I'm sorry :(
+## 3. Remind your contacts to download your updated key ##
 
-Kind regards,
+Your contacts will need to download your updated key from the keyservers. Some software does this automatically.
 
-Paul
+If a contact says your key has expired, it's probably because they haven't got your updated key.
 
-===
-Paul Fawkesley (born Furley) |Engineer / Developer
 
-Trying to improve the world by making :)
+## 4. Opt out if you never want to hear from us again! ##
 
-* Website: https://www.paulfurley.com/expirybot-emails-pgp-users-before-their-key-expires/
-* Twitter: https://twitter.com/fawkesley
-* PGP: A999 B749 8D1A 8DC4 73E5  3C92 309F 635D AD1B 5517
+We hope this email has been helpful. If this feels like spam, we're sorry :(
 
-Stop *all* Expirybot emails to {email_address}:
-
+You can stop *all* Expirybot emails to {email_address}:
 {unsubscribe_link}
 
+---
+
+Expirybot is a free public-good service run by Paul Fawkesley and Ian Drysdale.
+
+We're on a mission to make strong encryption simple.
+
+- Paul & Ian
+
+Paul Fawkesley
+@paul@mastodon.me.uk
+paul@fluidkeys.com
+
+Ian Drysdale
+@idrysdale
+ian@fluidkeys.com
