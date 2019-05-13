@@ -18,17 +18,19 @@ You don't need to create a new key.
 
 We've written a few short guides with screenshots for different software:
 
-* Automatically using Fluidkeys (command-line, works with GnuPG):
-  https://www.fluidkeys.com/docs/extend-your-key-from-gpg/
-
-* Manually using GPG Suite / GPG Keychain (macOS):
+* GPG Suite / GPG Keychain (macOS):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg-suite-gpg-keychain
 
-* Manually using Enigmail (Thunderbird plugin):
+* Enigmail (Thunderbird plugin):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-enigmail-thunderbird
 
-* Manually using GnuPG (command-line):
+* GnuPG (command-line):
   https://www.paulfurley.com/extend-pgp-key-expiry-with-gpg
+
+* Fluidkeys (command-line, works with GnuPG, see disclaimer):
+  https://www.fluidkeys.com/docs/extend-your-key-from-gpg/
+
+[disclaimer: we build Fluidkeys, it's open source & hosting is free for individuals]
 
 
 ## 2. Upload your public key to the keyservers ##
@@ -65,3 +67,9 @@ paul@fluidkeys.com
 Ian Drysdale
 @idrysdale
 ian@fluidkeys.com
+
+c/o DoES Liverpool, The Tapestry
+68-76 Kempston Street
+Liverpool
+L3 8HL
+United Kingdom
